@@ -57,7 +57,7 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(15, 2, 1.8);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(10, 4, 0.5);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(10, 0, 0.5);
 
     public static double LATERAL_MULTIPLIER = 1.09;
 
@@ -100,7 +100,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         // TODO: if your hub is mounted vertically, remap the IMU axes so that the z-axis points
         // upward (normal to the floor) using a command like the following:
-         BNO055IMUUtil.remapAxes(imu, AxesOrder.ZYX, AxesSigns.NPN);
+         BNO055IMUUtil.remapAxes(imu, AxesOrder.XYZ, AxesSigns.PPN);
 
         leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
         leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
@@ -304,7 +304,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         // Rotate about the z axis is the default assuming your REV Hub/Control Hub is laying
         // flat on a surface
 
-        return (double) imu.getAngularVelocity().zRotationRate;
+        return (double) imu.getAngularVelocity().xRotationRate;
     }
 
     public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {

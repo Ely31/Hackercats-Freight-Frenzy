@@ -21,14 +21,13 @@ public class MeepMeepTesting {
                 // Background opacity from 0-1
                 .setBackgroundAlpha(1f)
                 // Set constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                .setConstraints(52, 40, Math.toRadians(167), Math.toRadians(167), 14.1)
+                .setConstraints(55, 45, Math.toRadians(167), Math.toRadians(167), 14.1)
 
                 // The path we are simulating
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(-50, -50, 0))
-                                .strafeLeft(55)
-                                .splineToSplineHeading(new Pose2d(100-50,75-50,Math.toRadians(-90)),Math.toRadians(0))
-                                .forward(12)
+                        drive.trajectorySequenceBuilder(new Pose2d(-8,-43,Math.toRadians(100)))
+                                .lineToSplineHeading(new Pose2d(0,-55,Math.toRadians(180)))
+                                .splineToSplineHeading(new Pose2d(50,-65,Math.toRadians(180)), Math.toRadians(0))
                                 .build()
                 )
                 .start();
