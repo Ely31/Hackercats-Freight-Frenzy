@@ -38,6 +38,8 @@ public class FieldCentric extends LinearOpMode {
       double x = gamepad1.left_stick_x;
       double y = -gamepad1.left_stick_y;
       double turn = gamepad1.right_stick_x;
+
+      double multiplier = (-0.875*gamepad1.right_trigger)+1;
       
       // Read inverse imu heading
       double botHeading = -imu.getAngularOrientation().firstAngle;
@@ -70,10 +72,10 @@ public class FieldCentric extends LinearOpMode {
           backRightPower /= max;
        }
 
-       motorFrontLeft.setPower(frontLeftPower);
-       motorBackLeft.setPower(backLeftPower);
-       motorFrontRight.setPower(frontRightPower);
-       motorBackRight.setPower(backRightPower);
+       motorFrontLeft.setPower(frontLeftPower*multiplier);
+       motorBackLeft.setPower(backLeftPower*multiplier);
+       motorFrontRight.setPower(frontRightPower*multiplier);
+       motorBackRight.setPower(backRightPower*multiplier);
     }
   }
 }
