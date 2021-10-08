@@ -25,9 +25,9 @@ public class MeepMeepTesting {
 
                 // The path we are simulating
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(-8,-43,Math.toRadians(100)))
-                                .lineToSplineHeading(new Pose2d(0,-55,Math.toRadians(180)))
-                                .splineToSplineHeading(new Pose2d(50,-65,Math.toRadians(180)), Math.toRadians(0))
+                        drive.trajectorySequenceBuilder(new Pose2d(-36,-63,Math.toRadians(-90)))
+                                .back(0.5)
+                                .splineToSplineHeading(new Pose2d(12,-63,Math.toRadians(180)), Math.toRadians(-30))
                                 .build()
                 )
                 .start();
