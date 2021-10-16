@@ -28,7 +28,6 @@ public class intakeClassTest extends LinearOpMode {
                 if (toggle == 1) toggle = 0;
             }
             prevA = gamepad1.a;
-            intake.toggleintake(toggle);
         }
     }
 }

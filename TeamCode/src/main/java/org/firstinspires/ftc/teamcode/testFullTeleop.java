@@ -13,7 +13,6 @@ public class testFullTeleop extends LinearOpMode {
 
     TeleopDrive drive = new TeleopDrive();
     Intake intake = new Intake();
-    Deposit deposit = new Deposit();
 
 
     boolean prevA;
@@ -24,10 +23,11 @@ public class testFullTeleop extends LinearOpMode {
         // Init
         drive.init(hardwareMap);
         intake.init(hardwareMap);
-        deposit.init(hardwareMap);
 
         intakeOn = false;
         prevA = false;
+
+        boolean intakeIsReverseing = false;
 
         waitForStart();
     
@@ -40,20 +40,22 @@ public class testFullTeleop extends LinearOpMode {
             drive.drive(gamepad1.left_stick_x,gamepad1.left_stick_y,gamepad1.right_stick_x,gamepad1.right_trigger);
 
             //intake control
-            if (gamepad1.b) intake.reverse();
-
-            else if (gamepad1.a && !prevA){
+            if (gamepad1.b) {
+                intake.reverse();
+                intakeIsReverseing = true;
+            } else if (gamepad1.a && !prevA){
                 intakeOn = !intakeOn;
                 if (intakeOn) intake.on();
                 else intake.off();
             }
+
+            if (intakeIsReverseing && !gamepad1.b) {
+                if (intakeOn) intake.on();
+                else intake.off();
+                intakeIsReverseing = false;
+            }
             prevA = gamepad1.a;
 
-            //deposit control
-            if (gamepad1.left_bumper){
-                deposit.dump();
-                sleep(200);
-            }
         }
     }
 }
