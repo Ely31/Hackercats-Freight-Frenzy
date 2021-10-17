@@ -16,18 +16,18 @@ import java.util.List;
 
 // Credits to team 7303 RoboAvatars, adjusted by team 3954 Pink to the Future
 
-public class eocvTest1Pinkttf extends OpenCvPipeline
+public class EocvPinkttf extends OpenCvPipeline
 {
-    Scalar HOT_PINK = new Scalar(196, 23, 112);
+    Scalar GREEN = new Scalar(145, 54, 34);
 
     // Pink, the default color                         Y      Cr     Cb    (Do not change Y)
-    public static Scalar scalarLowerYCrCb = new Scalar(  0.0, 150.0, 120.0);
-    public static Scalar scalarUpperYCrCb = new Scalar(255.0, 255.0, 255.0);
+    //public static Scalar scalarLowerYCrCb = new Scalar(  0.0, 150.0, 120.0);
+    //public static Scalar scalarUpperYCrCb = new Scalar(255.0, 255.0, 255.0);
     // These values define the Range of color, for example green is a color "in between" lightgreen and darkgreen.
 
     // Green                                             Y      Cr     Cb
-    // public static Scalar scalarLowerYCrCb = new Scalar(  0.0, 0.0, 0.0);
-    // public static Scalar scalarUpperYCrCb = new Scalar(255.0, 120.0, 120.0);
+    public static Scalar scalarLowerYCrCb = new Scalar(  0.0, 0.0, 0.0);
+    public static Scalar scalarUpperYCrCb = new Scalar(255.0, 120.0, 120.0);
     // use this picture for you own color https://github.com/PinkToTheFuture/OpenCV_FreightFrenzy_2021-2022/blob/main/YCbCr.jpeg
     // Note that the Cr and Cb values range between 0-255. this means that the origin of the coordinate system is (128,128)
 
@@ -130,7 +130,7 @@ public class eocvTest1Pinkttf extends OpenCvPipeline
                 Imgproc.rectangle(output, maxRect, new Scalar(0, 255, 0), 2);
             }
             // Draw Borders
-            Imgproc.rectangle(output, new Rect(borderLeftX, borderTopY, CAMERA_WIDTH - borderRightX - borderLeftX, CAMERA_HEIGHT - borderBottomY - borderTopY), HOT_PINK, 2);
+            Imgproc.rectangle(output, new Rect(borderLeftX, borderTopY, CAMERA_WIDTH - borderRightX - borderLeftX, CAMERA_HEIGHT - borderBottomY - borderTopY), GREEN, 2);
             // Display Data
             Imgproc.putText(output, "Area: " + getRectArea() + " Midpoint: " + getRectMidpointXY().x + " , " + getRectMidpointXY().y, new Point(5, CAMERA_HEIGHT - 5), 0, 0.6, new Scalar(255, 255, 255), 2);
 
