@@ -13,8 +13,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 import java.util.List;
-
-// Credits to team 7303 RoboAvatars, adjusted by team 3954 Pink to the Future
+// Created by team 7303 RoboAvatars, adjusted by team 3954 Pink to the Future
 
 // Modified and adapted by team 13606 Hackercats
 
@@ -44,6 +43,7 @@ public class EocvPinkttf extends OpenCvPipeline
     private int CAMERA_WIDTH = 320;
     private int CAMERA_HEIGHT = 240;
     private int viewThird = CAMERA_WIDTH/3; //one third of the width of the camera view
+    private int viewTwoThirds = viewThird*2;
 
     private int loopcounter = 0;
     private int ploopcounter = 0;
@@ -159,9 +159,9 @@ public class EocvPinkttf extends OpenCvPipeline
     // find the position on the barcode using the x value of the rectangle midpoint
     public int getBarcodePos(){
         int barcodepos;
-        if (getRectMidpointX() > 0) barcodepos= 1;
-        else if (getRectMidpointX() > viewThird) barcodepos = 2;
-        else if (getRectMidpointX() > viewThird*2) barcodepos = 3;
+        if (getRectMidpointX() > 0 && getRectMidpointX() < viewThird) barcodepos= 1;
+        else if (getRectMidpointX() > viewThird && getRectMidpointX() < viewTwoThirds) barcodepos = 2;
+        else if (getRectMidpointX() > viewTwoThirds && getRectMidpointX() < CAMERA_WIDTH) barcodepos = 3;
         else barcodepos = 0;
 
         return barcodepos;
