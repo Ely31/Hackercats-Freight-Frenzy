@@ -12,16 +12,14 @@ import org.openftc.easyopencv.OpenCvWebcam;
 @TeleOp(name="",group="")
 public class BarcodeTest extends LinearOpMode {
     // Pre-init
+    // Create webcam and pipline
     OpenCvWebcam webcam;
-
     EocvPinkttf pttfPipline = new EocvPinkttf();
 
     @Override
     public void runOpMode() {
         // Init
-
-        int barcodeNum;
-
+        // Set up webcam
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
         webcam.setPipeline(pttfPipline);
 
@@ -43,18 +41,13 @@ public class BarcodeTest extends LinearOpMode {
 
         while (opModeIsActive()) {
             // TeleOp loop
-
+            // Display telemetry every 200ms
             sleep(200);
 
             double posX = pttfPipline.getRectMidpointX();
             telemetry.addData("position_x",posX);
 
-            if (posX>0 && 100 > posX) barcodeNum = 1;
-            else if (posX > 100 && 200 >posX) barcodeNum = 2;
-            else if (posX >200 && 320 >posX) barcodeNum = 3;
-            else barcodeNum = 0;
-
-            telemetry.addData("barcodenum",barcodeNum);
+            telemetry.addData("barcodepos",pttfPipline.getBarcodePos());
 
             telemetry.update();
 

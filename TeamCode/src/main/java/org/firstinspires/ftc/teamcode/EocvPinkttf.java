@@ -16,6 +16,8 @@ import java.util.List;
 
 // Credits to team 7303 RoboAvatars, adjusted by team 3954 Pink to the Future
 
+// Modified and adapted by team 13606 Hackercats
+
 public class EocvPinkttf extends OpenCvPipeline
 {
     Scalar GREEN = new Scalar(145, 54, 34);
@@ -39,8 +41,9 @@ public class EocvPinkttf extends OpenCvPipeline
     private int borderTopY    = 0;   //amount of pixels from the top of the cam to skip
     private int borderBottomY = 0;   //amount of pixels from the bottom of the cam to skip
 
-    private int CAMERA_WIDTH = 640;
-    private int CAMERA_HEIGHT = 360;
+    private int CAMERA_WIDTH = 320;
+    private int CAMERA_HEIGHT = 240;
+    private int viewThird = CAMERA_WIDTH/3; //one third of the width of the camera view
 
     private int loopcounter = 0;
     private int ploopcounter = 0;
@@ -151,4 +154,16 @@ public class EocvPinkttf extends OpenCvPipeline
     public Point getRectMidpointXY(){ return new Point(getRectMidpointX(), getRectMidpointY());}
     public double getAspectRatio(){ return getRectArea()/(CAMERA_HEIGHT*CAMERA_WIDTH); }
     public double getRectArea(){ return maxRect.area(); }
+
+
+    // find the position on the barcode using the x value of the rectangle midpoint
+    public int getBarcodePos(){
+        int barcodepos;
+        if (getRectMidpointX() > 0) barcodepos= 1;
+        else if (getRectMidpointX() > viewThird) barcodepos = 2;
+        else if (getRectMidpointX() > viewThird*2) barcodepos = 3;
+        else barcodepos = 0;
+
+        return barcodepos;
+    }
 }
