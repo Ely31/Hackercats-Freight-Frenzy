@@ -8,11 +8,15 @@ public class Intake {
 
     private DcMotor intake;
 
+    private boolean lastInput;
+    private boolean intakeToggledStatus;
+
     public void init(HardwareMap hwmap) {
         intake = hwmap.get(DcMotor.class, "intake");
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
+        lastInput = false;
+        intakeToggledStatus = false;
     }
-
 
     public void on(){
         intake.setPower(1);
@@ -22,5 +26,15 @@ public class Intake {
     }
     public void reverse(){
         intake.setPower(-1);
+    }
+
+    public void toggle(boolean input){
+        if (input && !lastInput){
+            intakeToggledStatus = !intakeToggledStatus;
+        }
+        if (intakeToggledStatus) on();
+        else off();
+
+        lastInput = input;
     }
 }

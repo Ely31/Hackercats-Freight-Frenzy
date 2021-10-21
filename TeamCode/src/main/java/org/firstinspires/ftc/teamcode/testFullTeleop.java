@@ -19,9 +19,6 @@ public class testFullTeleop extends LinearOpMode {
 
     ElapsedTime dumptime = new ElapsedTime();
 
-    boolean prevA;
-    boolean intakeOn;
-
     @Override
     public void runOpMode() {
         // Init
@@ -29,8 +26,6 @@ public class testFullTeleop extends LinearOpMode {
         intake.init(hardwareMap);
         deposit.init(hardwareMap);
 
-        intakeOn = false;
-        prevA = false;
 
         dumptime.reset();
 
@@ -46,22 +41,9 @@ public class testFullTeleop extends LinearOpMode {
             //mecdrive
             drive.drive(gamepad1.left_stick_x,gamepad1.left_stick_y,gamepad1.right_stick_x,gamepad1.right_trigger);
 
-            //intake control (this code is a nightmare)
-            if (gamepad1.b) {
-                intake.reverse();
-                intakeIsReverseing = true;
-            } else if (gamepad1.a && !prevA){
-                intakeOn = !intakeOn;
-                if (intakeOn) intake.on();
-                else intake.off();
-            }
-
-            if (intakeIsReverseing && !gamepad1.b) {
-                if (intakeOn) intake.on();
-                else intake.off();
-                intakeIsReverseing = false;
-            }
-            prevA = gamepad1.a;
+            //intake control
+            if (gamepad1.b) intake.reverse();
+            else intake.toggle(gamepad1.a);
 
 
             // deposit

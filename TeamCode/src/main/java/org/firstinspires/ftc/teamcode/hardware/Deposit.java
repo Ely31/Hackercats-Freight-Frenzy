@@ -34,11 +34,7 @@ public class Deposit {
             door.setPosition(0.6);
             pusher.setPosition(0.45);// Open the door if the timer is less than pusherlag
         }
-        if (time.milliseconds() > falltime) { // Reset deposit after falltime is over
-            pusher.setPosition(pusherhome);
-            door.setPosition(doorhome);
-        }
-
+        if (time.milliseconds() > falltime) reset(); // Reset deposit after falltime is over
     }
 
     public void reset(){
