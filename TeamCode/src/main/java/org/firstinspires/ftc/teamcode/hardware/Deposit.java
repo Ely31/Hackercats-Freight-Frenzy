@@ -14,9 +14,6 @@ public class Deposit {
     double pusherhome; // The retracted position of the pusher
     double doorhome; // The closed position of the door
 
-    //delay between opening the door and pushing freight out
-    public static long pusherlag = 50;
-
     //time to wait before we close the door and reset
     // the pusher after the freight has fallen out
     public static long falltime = 300;
@@ -33,9 +30,11 @@ public class Deposit {
     }
 
     public void dump(ElapsedTime time){
-        if (time.milliseconds() < pusherlag) door.setPosition(0.6); // Open the door if the timer is less than pusherlag
-        if (time.milliseconds() > pusherlag && time.milliseconds() < pusherlag+falltime) pusher.setPosition(0.45); // Push freight out once pusherlag is over
-        if (time.milliseconds() > pusherlag+falltime) { // Reset deposit after falltime is over
+        if (time.milliseconds() > 0 && time.milliseconds() < falltime){
+            door.setPosition(0.6);
+            pusher.setPosition(0.45);// Open the door if the timer is less than pusherlag
+        }
+        if (time.milliseconds() > falltime) { // Reset deposit after falltime is over
             pusher.setPosition(pusherhome);
             door.setPosition(doorhome);
         }
