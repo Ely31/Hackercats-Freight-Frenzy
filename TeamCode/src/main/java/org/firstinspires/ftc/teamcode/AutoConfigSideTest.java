@@ -13,20 +13,17 @@ public class AutoConfigSideTest extends LinearOpMode {
     SampleMecanumDrive drive;
     TrajectorySequence test;
 
+    int side = 1;
+    int delay = 5;
+    String sideName = "red";
 
     @Override
     public void runOpMode() {
         // Init
         drive = new SampleMecanumDrive(hardwareMap);
-        drive.setPoseEstimate(new Pose2d(-36,-63,Math.toRadians(-90)));
-        int delay = 5;
 
-        test = drive.trajectorySequenceBuilder(new Pose2d(-36,-63,Math.toRadians(-90)))
-                .back(0.5)
-                .splineToSplineHeading(new Pose2d(12,-67,Math.toRadians(180)), Math.toRadians(-30))
-                .back(26)
-                .build();
-        while (!isStarted()&&!isStopRequested()){
+        while (!isStarted()&&!isStopRequested()){ // Init loop
+            // Change delay with dpad left and right
             if (gamepad1.dpad_right) {
                 delay += 1;
                 sleep(200);
@@ -35,8 +32,29 @@ public class AutoConfigSideTest extends LinearOpMode {
                 delay -=1;
                 sleep(200);
             }
+            if (gamepad1.dpad_down) side = -1;
+            if (gamepad1.dpad_up) side = 1;
+
+            if (side == 1) sideName = "red";
+            else sideName = "blue";
+
+            telemetry.addData(sideName,"side");
             telemetry.addData("delay",delay);
             telemetry.update();
+
+            if (gamepad1.a){
+                drive.setPoseEstimate(new Pose2d(-36,-63*side,Math.toRadians(-90*side)));
+                test = drive.trajectorySequenceBuilder(new Pose2d(-36,-63*side,Math.toRadians(-90*side)))
+                        .back(0.5)
+                        .splineToSplineHeading(new Pose2d(12,-67*side,Math.toRadians(180*side)), Math.toRadians(-30*side))
+                        .back(26)
+                        .build();
+
+                telemetry.addLine("Trajectory built");
+                telemetry.update();
+                sleep(200);
+            }
+
         }
 
         waitForStart();
@@ -44,7 +62,7 @@ public class AutoConfigSideTest extends LinearOpMode {
         if (opModeIsActive()) {
             // Autonomous
 
-            sleep(delay* 1000L); // Wait the number of second configured in init
+            sleep(delay* 1000L); // Wait the number of seconds configured in init
             drive.followTrajectorySequence(test); // Follow the trajectory
         }
     }
