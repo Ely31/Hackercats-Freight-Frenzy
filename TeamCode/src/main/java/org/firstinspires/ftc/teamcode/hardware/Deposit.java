@@ -16,7 +16,7 @@ public class Deposit {
 
     //time to wait before we close the door and reset
     // the pusher after the freight has fallen out
-    public static long falltime = 300;
+    public static int falltime = 300;
 
     public void init(HardwareMap hwmap) {
         pusher = hwmap.get(Servo.class, "pusher");
@@ -31,8 +31,8 @@ public class Deposit {
 
     public void dump(ElapsedTime time){
         if (time.milliseconds() > 0 && time.milliseconds() < falltime){
-            door.setPosition(0.6);
-            pusher.setPosition(0.45);// Open the door if the timer is less than pusherlag
+            doorOpen();
+            push();// Open the door if the timer is less than pusherlag
         }
         if (time.milliseconds() > falltime) reset(); // Reset deposit after falltime is over
     }
@@ -40,5 +40,11 @@ public class Deposit {
     public void reset(){
         pusher.setPosition(pusherhome);
         door.setPosition(doorhome);
+    }
+    public void doorOpen(){
+        door.setPosition(0.6);
+    }
+    public void push(){
+        pusher.setPosition(0.45);
     }
 }

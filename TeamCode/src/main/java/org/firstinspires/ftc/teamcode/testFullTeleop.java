@@ -26,15 +26,13 @@ public class testFullTeleop extends LinearOpMode {
         intake.init(hardwareMap);
         deposit.init(hardwareMap);
 
-
         dumptime.reset();
 
-        boolean intakeIsReverseing = false;
+        telemetry.addLine("initialized");
+        telemetry.update();
 
         waitForStart();
-    
         // Pre-run
-    
         while (opModeIsActive()) {
             // TeleOp loop
 
