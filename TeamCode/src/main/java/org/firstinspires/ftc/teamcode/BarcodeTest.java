@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.hardware.EocvBarcodePipeline;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -14,7 +15,7 @@ public class BarcodeTest extends LinearOpMode {
     // Pre-init
     // Create webcam and pipline
     OpenCvWebcam webcam;
-    EocvPinkttf pttfPipline = new EocvPinkttf();
+    EocvBarcodePipeline pttfPipline = new EocvBarcodePipeline();
 
     @Override
     public void runOpMode() {

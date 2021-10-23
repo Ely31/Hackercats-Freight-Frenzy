@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.hardware;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -17,7 +17,7 @@ import java.util.List;
 
 // Modified and adapted by team 13606 Hackercats
 
-public class EocvPinkttf extends OpenCvPipeline
+public class EocvBarcodePipeline extends OpenCvPipeline
 {
     Scalar GREEN = new Scalar(145, 54, 34);
 

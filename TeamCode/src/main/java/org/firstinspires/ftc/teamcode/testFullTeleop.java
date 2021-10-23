@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.hardware.Deposit;
 import org.firstinspires.ftc.teamcode.hardware.Intake;
 import org.firstinspires.ftc.teamcode.hardware.TeleopDrive;
 
-@TeleOp(name="",group="")
+@TeleOp
 public class testFullTeleop extends LinearOpMode {
     // Pre-init
 
@@ -28,26 +28,22 @@ public class testFullTeleop extends LinearOpMode {
 
         dumptime.reset();
 
-        telemetry.addLine("initialized");
+        telemetry.addLine("Initialized");
         telemetry.update();
 
         waitForStart();
         // Pre-run
         while (opModeIsActive()) {
             // TeleOp loop
-
-            //mecdrive
+            // Mecdrive control
             drive.drive(gamepad1.left_stick_x,gamepad1.left_stick_y,gamepad1.right_stick_x,gamepad1.right_trigger);
 
-            //intake control
+            // Intake control
             if (gamepad1.b) intake.reverse();
             else intake.toggle(gamepad1.a);
 
-
-            // deposit
-            if (gamepad1.left_bumper){
-                dumptime.reset();
-            }
+            // Deposit control
+            if (gamepad1.left_bumper) dumptime.reset();
             deposit.dump(dumptime);
         }
     }
