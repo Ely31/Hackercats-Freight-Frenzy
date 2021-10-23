@@ -38,11 +38,12 @@ public class AutoConfigSideTest extends LinearOpMode {
             if (side == 1) sideName = "red";
             else sideName = "blue";
 
-            telemetry.addData(sideName,"side");
+            telemetry.addData("side",sideName);
             telemetry.addData("delay",delay);
-            telemetry.update();
 
             if (gamepad1.a){
+                telemetry.clear();
+
                 drive.setPoseEstimate(new Pose2d(-36,-63*side,Math.toRadians(-90*side)));
                 test = drive.trajectorySequenceBuilder(new Pose2d(-36,-63*side,Math.toRadians(-90*side)))
                         .back(0.5)
@@ -52,9 +53,8 @@ public class AutoConfigSideTest extends LinearOpMode {
 
                 telemetry.addLine("Trajectory built");
                 telemetry.update();
-                sleep(200);
             }
-
+            telemetry.update();
         }
 
         waitForStart();
