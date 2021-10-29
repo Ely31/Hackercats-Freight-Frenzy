@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.teamcode.util.TruePress;
+
 @Autonomous(name="",group="")
 public class InitUITest extends LinearOpMode {
     // Pre-init

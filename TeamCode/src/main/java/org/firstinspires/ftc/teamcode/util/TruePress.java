@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.util;
 
 // To make something only run once a button is pressed for the firt time
 public class TruePress {
