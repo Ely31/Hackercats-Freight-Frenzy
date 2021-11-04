@@ -7,21 +7,24 @@ public class FourBar {
 
     private DcMotor fourBar;
 
-    double ticksPerRev = 1425.1*2; // *2 because of the external gear ratio
-    double ticksPerDegree = ticksPerRev/360;
+    private final double ticksPerRev = 1425.1*2; // *2 because of the external gear ratio
+    private final double ticksPerDegree = ticksPerRev/360;
+    private final double speed = 0.3; // The speed the 4b will always run at while doing any movement
 
     // Define the safe range
-    private double safeRangeMin = -1;
-    private double safeRangeMax = 110;
+    private final double safeRangeMin = -1;
+    private final double safeRangeMax = 110;
 
-    // Positions of the 4b, in degrees, of the 4 places we would want it to run to
+    // Positions of the 4b, in degrees, of the 3 levels we want it to run to
     public double level1 = 5;
     public double level2 = 30;
     public double level3 = 90;
 
+    public int activeLevel; // The level the 4b will run to when told to raise, and the level whose offset is edited
+
    public void init(HardwareMap hwmap){ //
         fourBar = hwmap.get(DcMotor.class,"fourbar");
-        fourBar.setTargetPosition(0);
+        activeLevel = 3;
         zero();
     }
 
@@ -33,6 +36,8 @@ public class FourBar {
         // If the input angle is below the safe range, run the 4b to the minimum of the range
         else if (angle > safeRangeMax) fourBar.setTargetPosition((int)(safeRangeMax*ticksPerDegree));
         // If the input angle is above the safe range, run the 4b to the to maximum of the range
+        fourBar.setPower(speed);
+        fourBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     public void retract(){
@@ -51,8 +56,36 @@ public class FourBar {
        runToAngle(level3);
     }
 
+    public void runToLevel(int level){ // Run to a level specified by an integer
+       switch (level){
+           case 1:
+               runToLevel1();
+               break;
+           case 2:
+               runToLevel2();
+               break;
+           case 3:
+               runToLevel3();
+               break;
+       }
+    }
+
     public void zero(){ // Reset the zero point (the angle where it's fully retracted)
        fourBar.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-       fourBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+
+    // edit the positions of each level so drivers can account for shipping hub wobble
+    public void editLevelOffset(double change){
+       switch (activeLevel){
+           case 1: level1 += change;
+           break;
+
+           case 2: level2 += change;
+           break;
+
+           case 3: level3 +=change;
+           break;
+       }
     }
 }

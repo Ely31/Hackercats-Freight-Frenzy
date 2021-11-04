@@ -19,11 +19,11 @@ public class CarouselSpinner {
         carousel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
-    public void deliver(){ // To be used in auto to deliver the duck
-        spinRotations(5,1);
+    public void deliver(int side){ // To be used in auto to deliver the duck
+        spinRotations(5*side,1);
     }
 
-    public void setSpeed(double input, double speedMultiplier){
+    public void setSpeed(float input, double speedMultiplier){
         carousel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         carousel.setPower(input*speedMultiplier);
     }
