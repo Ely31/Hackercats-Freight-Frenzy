@@ -8,17 +8,17 @@ public class FourBar {
     private DcMotor fourBar;
 
     private final double ticksPerRev = 1425.1*2; // *2 because of the external gear ratio
-    private final double ticksPerDegree = ticksPerRev/360;
-    private final double speed = 0.3; // The speed the 4b will always run at while doing any movement
+    private final double ticksPerDegree = ticksPerRev/360.0;
+    private final double speed = 1; // The speed the 4b will always run at while doing any movement
 
     // Define the safe range
-    private final double safeRangeMin = -1;
-    private final double safeRangeMax = 110;
+    private final double safeRangeMin = -0.5;
+    private final double safeRangeMax = 120;
 
     // Positions of the 4b, in degrees, of the 3 levels we want it to run to
-    public double level1 = 5;
-    public double level2 = 30;
-    public double level3 = 90;
+    public double level1 = 20;
+    public double level2 = 60;
+    public double level3 = 100;
 
     public int activeLevel; // The level the 4b will run to when told to raise, and the level whose offset is edited
 
