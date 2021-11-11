@@ -15,16 +15,16 @@ public class MeepMeepTesting {
 
         // Declare a MeepMeep instance
         // With a field size of 700 pixels at 50 fps
-        MeepMeep meepMeep = new MeepMeep(700,50);
+        MeepMeep meepMeep = new MeepMeep(740,50);
 
         RoadRunnerBotEntity bot = new DefaultBotBuilder(meepMeep)
 
+                .setDimensions(12.6,18) // Width of 12.6 to match our thin bot
                 .setConstraints(55, 45, Math.toRadians(167), Math.toRadians(167), 12)
                 // The path we are simulating
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(-36,-63,Math.toRadians(-90)))
-                                .back(0.5)
-                                .splineToSplineHeading(new Pose2d(12,-63,Math.toRadians(180)), Math.toRadians(-30))
+                        drive.trajectorySequenceBuilder(new Pose2d(11.4, -61,Math.toRadians(-90)))
+                                .lineToSplineHeading(new Pose2d(-7.0, -45,Math.toRadians(-70)))
                                 .build()
                 );
                 meepMeep

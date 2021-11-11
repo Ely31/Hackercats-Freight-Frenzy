@@ -74,6 +74,7 @@ public class EocvBarcodePipeline extends OpenCvPipeline
     @Override
     public Mat processFrame(Mat input)
     {
+        MEMLEAK_DETECTION_ENABLED = false; // Hacky fix to an eocv bug https://github.com/OpenFTC/EasyOpenCV/issues/35
         Mat output = input.clone();
         try
         {

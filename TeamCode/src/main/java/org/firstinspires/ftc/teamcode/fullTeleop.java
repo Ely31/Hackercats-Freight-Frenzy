@@ -67,7 +67,7 @@ public class fullTeleop extends LinearOpMode {
             else if (gamepad2.b) fourBar.activeLevel = 3;
 
             // Tune the height of the active 4b level to account for shipping hub inbalance
-            if (gamepad2.dpad_up) fourBar.editLevelOffset(0.1);
+            if (gamepad2.dpad_up) fourBar.editLevelOffset(0.1); // This number is small because it's added every loop
             if (gamepad2.dpad_down) fourBar.editLevelOffset(-0.1);
 
             // Four bar control
@@ -88,7 +88,7 @@ public class fullTeleop extends LinearOpMode {
             }
 
             // Carousel mech control
-            carouselSpinner.setSpeed(gamepad2.left_trigger- gamepad2.right_trigger,0.3);
+            carouselSpinner.setSpeed(gamepad2.left_trigger- gamepad2.right_trigger,0.15);
             // Subracting the right trigger input from the left is an easy way to make the left trigger turn it one way
             // and the right trigger turn it another
         }

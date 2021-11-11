@@ -48,13 +48,8 @@ public class Camera {
     }
 
     // Pipeline
-  class EocvBarcodePipeline extends OpenCvPipeline {
+  public class EocvBarcodePipeline extends OpenCvPipeline {
         Scalar GREEN = new Scalar(145, 54, 34);
-
-        // Pink, the default color                         Y      Cr     Cb    (Do not change Y)
-        //public static Scalar scalarLowerYCrCb = new Scalar(  0.0, 150.0, 120.0);
-        //public static Scalar scalarUpperYCrCb = new Scalar(255.0, 255.0, 255.0);
-        // These values define the Range of color, for example green is a color "in between" lightgreen and darkgreen.
 
         // Green                                             Y      Cr     Cb
         public Scalar scalarLowerYCrCb = new Scalar(  0.0, 0.0, 0.0);
@@ -96,14 +91,10 @@ public class Camera {
             this.CAMERA_HEIGHT = CAMERA_HEIGHT;
         }
 
-        public void ConfigureScalarLower(double Y, double Cr, double Cb) { scalarLowerYCrCb = new Scalar(Y, Cr, Cb); }
-        public void ConfigureScalarUpper(double Y, double Cr, double Cb) { scalarUpperYCrCb = new Scalar(Y, Cr, Cb); }
-        public void ConfigureScalarLower(int Y, int Cr, int Cb) { scalarLowerYCrCb = new Scalar(Y, Cr, Cb); }
-        public void ConfigureScalarUpper(int Y, int Cr, int Cb) { scalarUpperYCrCb = new Scalar(Y, Cr, Cb); }
-
         @Override
         public Mat processFrame(Mat input)
         {
+            MEMLEAK_DETECTION_ENABLED = false; // Hacky fix to an eocv bug https://github.com/OpenFTC/EasyOpenCV/issues/35
             Mat output = input.clone();
             try
             {

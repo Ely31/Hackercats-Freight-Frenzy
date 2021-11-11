@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.hardware.EocvBarcodePipeline;
@@ -10,12 +10,14 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@TeleOp(name="",group="")
+@Autonomous(name="",group="")
 public class BarcodeTest extends LinearOpMode {
     // Pre-init
     // Create webcam and pipline
     OpenCvWebcam webcam;
     EocvBarcodePipeline pttfPipline = new EocvBarcodePipeline();
+
+    int barcodepos;
 
     @Override
     public void runOpMode() {
@@ -36,22 +38,38 @@ public class BarcodeTest extends LinearOpMode {
 
             }
         });
-        waitForStart();
 
-        // Pre-run
-
-        while (opModeIsActive()) {
-            // TeleOp loop
+        while (!isStarted()&&!isStopRequested()) { // Init loop
             // Display telemetry every 200ms
-            sleep(200);
+            sleep(1000);
 
             double posX = pttfPipline.getRectMidpointX();
+            barcodepos = pttfPipline.getBarcodePos();
             telemetry.addData("position_x",posX);
 
-            telemetry.addData("barcodepos",pttfPipline.getBarcodePos());
+            telemetry.addData("barcodepos",barcodepos);
 
             telemetry.update();
 
+        }
+
+        waitForStart();
+        // Pre-run
+
+        if (opModeIsActive()) {
+            // Run Auto
+            switch (barcodepos){
+                case 1:
+                    telemetry.addData("far side",0);
+                    break;
+                case 2:
+                    telemetry.addData("middle",0);
+                    break;
+                case 3:
+                    telemetry.addData("warehouse side",0);
+                    break;
+            }
+            sleep(5*1000);
         }
     }
 }
