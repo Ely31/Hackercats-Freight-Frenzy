@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -38,6 +39,8 @@ public class BarcodeTest extends LinearOpMode {
 
             }
         });
+
+        FtcDashboard.getInstance().startCameraStream(webcam,1); // Stream to dashboard at 1 fps
 
         while (!isStarted()&&!isStopRequested()) { // Init loop
             // Display telemetry every 200ms

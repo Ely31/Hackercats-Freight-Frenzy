@@ -16,8 +16,8 @@ public class FourBar {
     private final double safeRangeMax = 110;
 
     // Positions of the 4b, in degrees, of the 3 levels we want it to run to
-    public double level1 = 30;
-    public double level2 = 60;
+    public double level1 = 25;
+    public double level2 = 53;
     public double level3 = 90;
 
     public int activeLevel; // The level the 4b will run to when told to raise, and the level whose offset is edited

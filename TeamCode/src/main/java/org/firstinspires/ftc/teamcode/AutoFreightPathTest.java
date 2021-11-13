@@ -20,6 +20,7 @@ public class AutoFreightPathTest extends LinearOpMode {
 
         test =  drive.trajectorySequenceBuilder(startpos)
                 .lineToSplineHeading(new Pose2d(-7.0, -45,Math.toRadians(-70)))
+                .lineToSplineHeading(new Pose2d(0,-61,Math.toRadians(0)))
                 .build();
 
         waitForStart();

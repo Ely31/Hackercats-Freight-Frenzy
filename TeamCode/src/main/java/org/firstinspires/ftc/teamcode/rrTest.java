@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 public class rrTest extends LinearOpMode {
     SampleMecanumDrive drive;
     TrajectorySequence test;
-    Pose2d startpos = new Pose2d(-50,-50,Math.toRadians(0));
+    Pose2d startpos = new Pose2d(0,0,Math.toRadians(0));
 
     @Override
     public void runOpMode() {
@@ -18,8 +18,7 @@ public class rrTest extends LinearOpMode {
         drive.setPoseEstimate(startpos);
 
         test =  drive.trajectorySequenceBuilder(startpos)
-                .strafeLeft(55)
-                .splineToSplineHeading(new Pose2d(100-50,69-50,Math.toRadians(-90)),Math.toRadians(0))
+                .turn(Math.toRadians(180))
                 .forward(12)
                 .build();
 
