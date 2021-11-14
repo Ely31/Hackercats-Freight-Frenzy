@@ -22,7 +22,7 @@ public class MeepMeepTestingTwo {
 
         RoadRunnerBotEntity bot = new DefaultBotBuilder(meepMeep)
                 .setDimensions(11.6,18) // Width of 11.6 to match our thin bot
-                .setConstraints(55, 30, Math.toRadians(167), Math.toRadians(167), 12)
+                .setConstraints(55, 30, Math.toRadians(167), Math.toRadians(167), 11)
 
                 // The path we are simulating
                 .followTrajectorySequence(drive ->

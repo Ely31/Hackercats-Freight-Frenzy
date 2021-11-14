@@ -88,7 +88,7 @@ public class fullTeleop extends LinearOpMode {
             }
 
             // Carousel mech control
-            carouselSpinner.setSpeed(gamepad2.left_trigger- gamepad2.right_trigger,0.15);
+            carouselSpinner.setSpeed(gamepad2.left_trigger- gamepad2.right_trigger);
             // Subracting the right trigger input from the left is an easy way to make the left trigger turn it one way
             // and the right trigger turn it another
         }
