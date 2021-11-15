@@ -1,18 +1,26 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
+import com.qualcomm.robotcore.hardware.Servo;
+@Config
 public class Intake {
 
     private DcMotor intake;
+    private Servo intakeRelease;
+
+    public static double releaseHoldPosition = 1;
+    public static double releaseDropPosition = 0;
 
     private boolean lastInput;
     private boolean intakeToggledStatus;
 
     public void init(HardwareMap hwmap) {
         intake = hwmap.get(DcMotor.class, "intake");
+        intakeRelease = hwmap.get(Servo.class,"intakeRelease");
+        intakeRelease.setPosition(releaseHoldPosition);
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
         lastInput = false;
         intakeToggledStatus = false;
@@ -36,5 +44,13 @@ public class Intake {
         else off();
 
         lastInput = input;
+    }
+
+    public void dropIntake(){
+        intakeRelease.setPosition(releaseDropPosition);
+    }
+
+    public void resetRelease(){
+        intakeRelease.setPosition(releaseHoldPosition);
     }
 }

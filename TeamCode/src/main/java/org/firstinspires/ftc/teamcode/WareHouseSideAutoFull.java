@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.teamcode.hardware.Camera;
 import org.firstinspires.ftc.teamcode.hardware.Deposit;
 import org.firstinspires.ftc.teamcode.hardware.EocvBarcodePipeline;
 import org.firstinspires.ftc.teamcode.hardware.FourBar;
+import org.firstinspires.ftc.teamcode.hardware.Intake;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @Autonomous(name="",group="")
@@ -21,6 +23,7 @@ public class WareHouseSideAutoFull extends LinearOpMode {
     SampleMecanumDrive drive;
     FourBar fourBar = new FourBar();
     Deposit deposit = new Deposit();
+    Intake intake = new Intake();
 
     int barCodePos;
 
@@ -41,8 +44,11 @@ public class WareHouseSideAutoFull extends LinearOpMode {
         drive.setPoseEstimate(startPos);
         fourBar.init(hardwareMap);
         deposit.init(hardwareMap);
+        intake.init(hardwareMap);
 
         ElapsedTime depositTimer = new ElapsedTime();
+
+        FtcDashboard.getInstance().startCameraStream(webcam.webcam, 1); // Stream to dashboard at 1 fps
 
         while (!isStarted()&&!isStopRequested()){ // Init loop
             sleep(2000); // Throttle loop times to 2 seconds
@@ -58,6 +64,9 @@ public class WareHouseSideAutoFull extends LinearOpMode {
                 case 3:
                     depositPos = new Pose2d( -7,-43,Math.toRadians(-70));
                     break;
+                case 0:
+                    depositPos = new Pose2d( -7,-43.5,Math.toRadians(-70));
+                    break;
             }
 
             depositPreLoad = drive.trajectoryBuilder(startPos)
@@ -66,7 +75,10 @@ public class WareHouseSideAutoFull extends LinearOpMode {
 
             park = drive.trajectorySequenceBuilder(depositPreLoad.end())
                     .lineToSplineHeading(new Pose2d(0,-wallDistance,Math.toRadians(0)))
-                    .lineToSplineHeading(new Pose2d(40,-wallDistance, Math.toRadians(0)))
+                    .addTemporalMarker(1, () ->{
+                        fourBar.retract();
+                    })
+                    .lineToSplineHeading(new Pose2d(36,-wallDistance, Math.toRadians(0))) // Go into warehouse
                     .strafeLeft(26)
                     .forward(18)
                     .build();
@@ -82,7 +94,9 @@ public class WareHouseSideAutoFull extends LinearOpMode {
             depositTimer.reset();
             deposit.dump(depositTimer); // Dump
             sleep(1000); // Wait for that dump to finish
+            deposit.dump(depositTimer);
             drive.followTrajectorySequence(park); // Park in warehouse
+            intake.dropIntake();
         }
     }
 }
