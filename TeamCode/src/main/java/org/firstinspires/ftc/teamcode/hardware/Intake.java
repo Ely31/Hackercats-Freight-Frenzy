@@ -11,8 +11,8 @@ public class Intake {
     private DcMotor intake;
     private Servo intakeRelease;
 
-    public static double releaseHoldPosition = 1;
-    public static double releaseDropPosition = 0;
+    double releaseHoldPosition = 0.1;
+    double releaseDropPosition = 0.3;
 
     private boolean lastInput;
     private boolean intakeToggledStatus;
@@ -50,7 +50,7 @@ public class Intake {
         intakeRelease.setPosition(releaseDropPosition);
     }
 
-    public void resetRelease(){
+    public void resetDropper(){
         intakeRelease.setPosition(releaseHoldPosition);
     }
 }

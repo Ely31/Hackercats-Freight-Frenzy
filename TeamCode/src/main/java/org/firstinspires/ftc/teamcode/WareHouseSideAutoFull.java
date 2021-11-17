@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.hardware.EocvBarcodePipeline;
 import org.firstinspires.ftc.teamcode.hardware.FourBar;
 import org.firstinspires.ftc.teamcode.hardware.Intake;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.util.TruePress;
 
 @Autonomous(name="",group="")
 public class WareHouseSideAutoFull extends LinearOpMode {
@@ -25,7 +26,7 @@ public class WareHouseSideAutoFull extends LinearOpMode {
     Deposit deposit = new Deposit();
     Intake intake = new Intake();
 
-    int barCodePos;
+    int hubActiveLevel;
 
     final double originToWall = 141.0/2.0; // I guess the field is actually 141 inches wide
     final double wallDistance = originToWall - 6.5; // Center of bot is 6.5in from wall
@@ -34,6 +35,9 @@ public class WareHouseSideAutoFull extends LinearOpMode {
     Pose2d depositPos;
     Trajectory depositPreLoad;
     TrajectorySequence park;
+
+
+    int side = 1; // Red alliance is 1, blue is -1
 
     @Override
     public void runOpMode() {
@@ -47,49 +51,76 @@ public class WareHouseSideAutoFull extends LinearOpMode {
         intake.init(hardwareMap);
 
         ElapsedTime depositTimer = new ElapsedTime();
+        ElapsedTime pipelineThrottle = new ElapsedTime();
 
         FtcDashboard.getInstance().startCameraStream(webcam.webcam, 1); // Stream to dashboard at 1 fps
 
         while (!isStarted()&&!isStopRequested()){ // Init loop
-            sleep(2000); // Throttle loop times to 2 seconds
-            barCodePos = pipeline.getBarcodePos();
 
-            switch (barCodePos){
-                case 1:
-                    depositPos = new Pose2d(-7.0, -45,Math.toRadians(-70));
-                    break;
-                case 2:
-                    depositPos = new Pose2d(-7,-44,Math.toRadians(-70));
-                    break;
-                case 3:
-                    depositPos = new Pose2d( -7,-43,Math.toRadians(-70));
-                    break;
-                case 0:
-                    depositPos = new Pose2d( -7,-43.5,Math.toRadians(-70));
-                    break;
-            }
+            if (gamepad1.a) side = 1;
+            if (gamepad1.b) side = -1;
+             // Select alliance with gamepad and display it to telemetry
+            telemetry.addData("red is 1",", blue is -1");
+            telemetry.addData("alliance",side);
+            telemetry.update();
 
-            depositPreLoad = drive.trajectoryBuilder(startPos)
-                    .lineToSplineHeading(depositPos)
-                    .build();
+           if (pipelineThrottle.milliseconds() > 2000) {// Throttle loop times to 2 seconds
 
-            park = drive.trajectorySequenceBuilder(depositPreLoad.end())
-                    .lineToSplineHeading(new Pose2d(0,-wallDistance,Math.toRadians(0)))
-                    .addTemporalMarker(1, () ->{
-                        fourBar.retract();
-                    })
-                    .lineToSplineHeading(new Pose2d(36,-wallDistance, Math.toRadians(0))) // Go into warehouse
-                    .strafeLeft(26)
-                    .forward(18)
-                    .build();
-        }
+               switch (pipeline.getBarcodePos()){
+                   case 1:
+                       if (side == -1) hubActiveLevel = 3;
+                       else hubActiveLevel = 1;
+                       break;
+                   case 3:
+                       if (side == -1) hubActiveLevel = 1;
+                       else hubActiveLevel = 3;
+                       break;
+                   case 2:
+                       hubActiveLevel = 2;
+                       break;
+               }
+
+               switch (hubActiveLevel) {
+                   case 1:
+                       depositPos = new Pose2d(-7.0, -45*side, Math.toRadians(-70*side));
+                       break;
+                   case 2:
+                       depositPos = new Pose2d(-7, -44*side, Math.toRadians(-70*side));
+                       break;
+                   case 3:
+                       depositPos = new Pose2d(-7, -43*side, Math.toRadians(-70*side));
+                       break;
+                   case 0:
+                       depositPos = new Pose2d(-7, -43.5, Math.toRadians(-70*side));
+                       break;
+               }
+
+               depositPreLoad = drive.trajectoryBuilder(startPos)
+                       .lineToSplineHeading(depositPos)
+                       .build();
+
+               park = drive.trajectorySequenceBuilder(depositPreLoad.end())
+                       .lineToSplineHeading(new Pose2d(0, -wallDistance*side, Math.toRadians(0*side)))
+                       .addTemporalMarker(0.5, () -> {
+                           fourBar.retract();
+                       })
+                       .lineToSplineHeading(new Pose2d(36, -wallDistance*side, Math.toRadians(0*side))) // Go into warehouse
+                       .strafeLeft(26)
+                       .forward(18)
+                       .build();
+
+               telemetry.addData("going to level", hubActiveLevel);
+               telemetry.update();
+               pipelineThrottle.reset(); // Reset the throttle timer so the whole thing loops
+           } // End of throttled section
+        }// End of init loop
 
         waitForStart();
         // Pre-run
     
         if (opModeIsActive()) {
             // Autonomous instructions
-            fourBar.runToLevel(barCodePos); // Extend 4b before driving
+            fourBar.runToLevel(hubActiveLevel); // Extend 4b before driving
             drive.followTrajectory(depositPreLoad); // Drive to spot where we'll deposit from
             depositTimer.reset();
             deposit.dump(depositTimer); // Dump
