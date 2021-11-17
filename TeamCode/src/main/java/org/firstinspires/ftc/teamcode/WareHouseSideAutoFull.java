@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -31,7 +32,7 @@ public class WareHouseSideAutoFull extends LinearOpMode {
     final double originToWall = 141.0/2.0; // I guess the field is actually 141 inches wide
     final double wallDistance = originToWall - 6.5; // Center of bot is 6.5in from wall
 
-    final Pose2d startPos = new Pose2d(11.4,-(originToWall-9), Math.toRadians(-90));
+    Pose2d startPos = new Pose2d(11.4,-(originToWall-9), Math.toRadians(-90));
     Pose2d depositPos;
     Trajectory depositPreLoad;
     TrajectorySequence park;
@@ -62,9 +63,13 @@ public class WareHouseSideAutoFull extends LinearOpMode {
              // Select alliance with gamepad and display it to telemetry
             telemetry.addData("red is 1",", blue is -1");
             telemetry.addData("alliance",side);
+            telemetry.addData("going to level", hubActiveLevel);
             telemetry.update();
 
            if (pipelineThrottle.milliseconds() > 2000) {// Throttle loop times to 2 seconds
+               // Update startpos to match side
+               startPos = new Pose2d(11.4,(-(originToWall-9))*side, Math.toRadians(-90*side));
+               drive.setPoseEstimate(startPos);
 
                switch (pipeline.getBarcodePos()){
                    case 1:
@@ -82,7 +87,7 @@ public class WareHouseSideAutoFull extends LinearOpMode {
 
                switch (hubActiveLevel) {
                    case 1:
-                       depositPos = new Pose2d(-7.0, -45*side, Math.toRadians(-70*side));
+                       depositPos = new Pose2d(-7.0, -43*side, Math.toRadians(-70*side));
                        break;
                    case 2:
                        depositPos = new Pose2d(-7, -44*side, Math.toRadians(-70*side));
@@ -105,7 +110,7 @@ public class WareHouseSideAutoFull extends LinearOpMode {
                            fourBar.retract();
                        })
                        .lineToSplineHeading(new Pose2d(36, -wallDistance*side, Math.toRadians(0*side))) // Go into warehouse
-                       .strafeLeft(26)
+                       .lineTo(new Vector2d(36,(-(originToWall-34))*side))
                        .forward(18)
                        .build();
 
