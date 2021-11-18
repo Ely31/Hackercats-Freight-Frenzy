@@ -5,8 +5,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
 public class TeleopDrive {
     private DcMotor lf;
     private DcMotor lb;
@@ -18,6 +16,8 @@ public class TeleopDrive {
 
     double rotX;
     double rotY;
+
+    BNO055IMU.Parameters imuParameters;
 
     public void init(HardwareMap hwmap){
         lf = hwmap.get(DcMotor.class,"lf");
@@ -35,9 +35,9 @@ public class TeleopDrive {
 
         //initialize imu
         imu = hwmap.get(BNO055IMU.class, "imu");
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-        imu.initialize(parameters);
+        imuParameters = new BNO055IMU.Parameters();
+        imuParameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        imu.initialize(imuParameters);
     }
 
     public void drive(double x,double y,double turn,double multiplier){
@@ -60,4 +60,7 @@ public class TeleopDrive {
         rb.setPower(rbPower*multiplier);
     }
 
+    public void calibrateHeading(){
+        imu.initialize(imuParameters);
+    }
 }

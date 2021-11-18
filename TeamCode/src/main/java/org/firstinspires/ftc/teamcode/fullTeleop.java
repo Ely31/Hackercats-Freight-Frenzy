@@ -52,6 +52,7 @@ public class fullTeleop extends LinearOpMode {
         while (opModeIsActive()) { // TeleOp loop
             // Mecdrive control
             drive.drive(gamepad1.left_stick_x,gamepad1.left_stick_y,gamepad1.right_stick_x,gamepad1.right_trigger);
+            if (gamepad1.back) drive.calibrateHeading(); // Reset imu (and therefore fieldcentric)
 
             // Intake control
             if (gamepad1.b) intake.reverse();
