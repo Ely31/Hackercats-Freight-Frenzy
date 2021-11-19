@@ -21,7 +21,6 @@ public class Intake {
         intake = hwmap.get(DcMotor.class, "intake");
         intakeRelease = hwmap.get(Servo.class,"intakeRelease");
         intakeRelease.setPosition(releaseHoldPosition);
-        intake.setDirection(DcMotorSimple.Direction.REVERSE);
         lastInput = false;
         intakeToggledStatus = false;
     }

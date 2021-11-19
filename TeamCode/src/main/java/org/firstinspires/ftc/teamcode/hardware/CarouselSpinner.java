@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class CarouselSpinner {
@@ -12,6 +13,7 @@ public class CarouselSpinner {
 
     public void init(HardwareMap hwmap){
         carousel = hwmap.get(DcMotor.class,"carousel");
+        carousel.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     public void spinRotations(double rotations,double speed){ // Set the target pos to a number of rotations from the current pos
@@ -21,7 +23,7 @@ public class CarouselSpinner {
     }
 
     public void deliver(int side){ // To be used in auto to deliver the duck
-        spinRotations(5*side,0.15);
+        spinRotations(7*side,0.15);
     }
 
     public void setSpeed(float input){

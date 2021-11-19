@@ -32,8 +32,8 @@ public class CarouselSideAutoFull extends LinearOpMode {
 
     final double originToWall = 141.0/2.0; // I guess the field is actually 141 inches wide
     final double wallDistance = originToWall - 6.5; // Center of bot is 6.5in from wall
-    final double carouselXCoordinate = -50;
-    final double carouselYCoordinate = -60;
+    final double carouselXCoordinate = -55;
+    final double carouselYCoordinate = -58;
 
     Pose2d startPos = new Pose2d(11.4,-(originToWall-9), Math.toRadians(-90));
     Pose2d depositPos;
@@ -89,16 +89,16 @@ public class CarouselSideAutoFull extends LinearOpMode {
 
                switch (hubActiveLevel) {
                    case 1:
-                       depositPos = new Pose2d(-16.60, -43*side, Math.toRadians(-70*side));
+                       depositPos = new Pose2d(-16.60, -43*side, Math.toRadians(250*side));
                        break;
                    case 2:
-                       depositPos = new Pose2d(-16.6, -44*side, Math.toRadians(-70*side));
+                       depositPos = new Pose2d(-16.6, -44*side, Math.toRadians(250*side));
                        break;
                    case 3:
-                       depositPos = new Pose2d(-16.6, -43*side, Math.toRadians(-70*side));
+                       depositPos = new Pose2d(-16.6, -43*side, Math.toRadians(250*side));
                        break;
                    case 0:
-                       depositPos = new Pose2d(-16.6, -43.5, Math.toRadians(-70*side));
+                       depositPos = new Pose2d(-16.6, -43.5, Math.toRadians(250*side));
                        break;
                }
 
@@ -107,7 +107,7 @@ public class CarouselSideAutoFull extends LinearOpMode {
                        .build();
 
                carouselAndPark = drive.trajectorySequenceBuilder(depositPreLoad.end())
-                       .lineToSplineHeading(new Pose2d(0, -wallDistance*side, Math.toRadians(0*side)))
+                       // .lineToSplineHeading(new Pose2d(0, -wallDistance*side, Math.toRadians(0*side)))
                        .addTemporalMarker(0.5, () -> {
                            fourBar.retract();
                        })
@@ -115,8 +115,9 @@ public class CarouselSideAutoFull extends LinearOpMode {
                        .addTemporalMarker(() -> {
                            carouselMech.deliver(side); // Spin carousel
                                })
+                       .waitSeconds(3)
                        .lineTo(new Vector2d(carouselXCoordinate+7,carouselYCoordinate*side)) // Back off carousel
-                       .lineToSplineHeading(new Pose2d(-60,-35*side,Math.toRadians(0*side)))
+                       .lineToSplineHeading(new Pose2d(-62,-33*side,Math.toRadians(0*side))) // Park
                        .build();
 
                pipelineThrottle.reset(); // Reset the throttle timer so the whole thing loops
