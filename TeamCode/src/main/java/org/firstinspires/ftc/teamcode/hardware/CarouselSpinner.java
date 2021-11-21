@@ -9,7 +9,7 @@ public class CarouselSpinner {
     private DcMotor carousel;
 
     private final double ticksPerRotation = 103.8;
-    private final double maxSpeed = 0.2;
+    private final double maxSpeed = 0.16;
 
     public void init(HardwareMap hwmap){
         carousel = hwmap.get(DcMotor.class,"carousel");
@@ -23,7 +23,7 @@ public class CarouselSpinner {
     }
 
     public void deliver(int side){ // To be used in auto to deliver the duck
-        spinRotations(7*side,0.15);
+        spinRotations(9*side,0.12);
     }
 
     public void setSpeed(float input){

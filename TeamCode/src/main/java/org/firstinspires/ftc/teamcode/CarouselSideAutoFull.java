@@ -115,7 +115,7 @@ public class CarouselSideAutoFull extends LinearOpMode {
                        .addTemporalMarker(() -> {
                            carouselMech.deliver(side); // Spin carousel
                                })
-                       .waitSeconds(3)
+                       .waitSeconds(4)
                        .lineTo(new Vector2d(carouselXCoordinate+7,carouselYCoordinate*side)) // Back off carousel
                        .lineToSplineHeading(new Pose2d(-62,-33*side,Math.toRadians(0*side))) // Park
                        .build();
