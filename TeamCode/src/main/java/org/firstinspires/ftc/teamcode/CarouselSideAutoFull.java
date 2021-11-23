@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.hardware.EocvBarcodePipeline;
 import org.firstinspires.ftc.teamcode.hardware.FourBar;
 import org.firstinspires.ftc.teamcode.hardware.Intake;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.util.AutoToTele;
 
 @Autonomous(name="",group="")
 public class CarouselSideAutoFull extends LinearOpMode {
@@ -137,6 +138,14 @@ public class CarouselSideAutoFull extends LinearOpMode {
             deposit.dump(depositTimer);
             drive.followTrajectorySequence(carouselAndPark); // Park in warehouse
             intake.dropIntake();
+
+            AutoToTele.endOfAutoPose = drive.getPoseEstimate();
+            AutoToTele.endOfAutoHeading = drive.getExternalHeading();
+            // Save this information to a class so we can use it in tele to calibate feild centric
+
+            telemetry.addData("endheading",Math.toDegrees( AutoToTele.endOfAutoHeading));
+            telemetry.update();
+            sleep(5*1000);
         }
     }
 }

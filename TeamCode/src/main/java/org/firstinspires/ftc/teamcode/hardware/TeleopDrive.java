@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.util.AutoToTele;
+
 public class TeleopDrive {
     private DcMotor lf;
     private DcMotor lb;
@@ -42,9 +44,9 @@ public class TeleopDrive {
 
     public void drive(double x,double y,double turn,double multiplier){
 
-        multiplier = (-0.875*multiplier)+1;
+        multiplier = (-0.5*multiplier)+1;
 
-        heading = -imu.getAngularOrientation().firstAngle;
+        heading = -(imu.getAngularOrientation().firstAngle+ AutoToTele.zeroIsUpHeading);
 
         rotX = x * Math.cos(heading) - -y * Math.sin(heading);
         rotY = x * Math.sin(heading) + -y * Math.cos(heading);
@@ -60,7 +62,8 @@ public class TeleopDrive {
         rb.setPower(rbPower*multiplier);
     }
 
-    public void calibrateHeading(){
+    public void resetHeading(){
+        AutoToTele.endOfAutoHeading = 90;
         imu.initialize(imuParameters);
     }
 }
