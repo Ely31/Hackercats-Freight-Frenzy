@@ -42,7 +42,7 @@ public class CarouselSideAutoFull extends LinearOpMode {
     TrajectorySequence carouselAndPark;
 
 
-    int side = 1; // Red alliance is 1, blue is -1
+    int side; // Red alliance is 1, blue is -1
 
     @Override
     public void runOpMode() {
@@ -61,13 +61,22 @@ public class CarouselSideAutoFull extends LinearOpMode {
 
         FtcDashboard.getInstance().startCameraStream(webcam.webcam, 1); // Stream to dashboard at 1 fps
 
+        AutoToTele.allianceSide = 1;
+
         while (!isStarted()&&!isStopRequested()){ // Init loop
 
-            if (gamepad1.a) side = 1;
-            if (gamepad1.b) side = -1;
-             // Select alliance with gamepad and display it to telemetry
-            telemetry.addData("red is 1",", blue is -1");
-            telemetry.addData("alliance",side);
+            // Select alliance with gamepad and display it to telemetry
+            if (gamepad1.b) AutoToTele.allianceSide = 1;
+            if (gamepad1.x) AutoToTele.allianceSide = -1;
+            side = AutoToTele.allianceSide;
+            switch (side) {
+                case 1:
+                    telemetry.addLine("red alliance");
+                    break;
+                case -1:
+                    telemetry.addLine("blue alliance");
+                    break;
+            }
             telemetry.addData("going to level", hubActiveLevel);
             telemetry.update();
 
@@ -99,7 +108,7 @@ public class CarouselSideAutoFull extends LinearOpMode {
                        depositPos = new Pose2d(-16.6, -43*side, Math.toRadians(250*side));
                        break;
                    case 0:
-                       depositPos = new Pose2d(-16.6, -43.5, Math.toRadians(250*side));
+                       depositPos = new Pose2d(-16.6, -43.5*side, Math.toRadians(250*side));
                        break;
                }
 
@@ -145,7 +154,7 @@ public class CarouselSideAutoFull extends LinearOpMode {
 
             telemetry.addData("endheading",Math.toDegrees( AutoToTele.endOfAutoHeading));
             telemetry.update();
-            sleep(5*1000);
+            sleep(2*1000);
         }
     }
 }

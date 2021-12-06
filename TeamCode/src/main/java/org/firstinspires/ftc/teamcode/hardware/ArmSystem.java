@@ -22,7 +22,7 @@ public class ArmSystem {
     // Define the safe range for the turret
     private final double TURRET_SAFERANGE_MIN = -90;
     private final double TURRET_SAFERANGE_MAX = 90;
-    private final double TURRET_SAFE_TO_RETRACT_FOURBAR_RANGE = 1;
+    private final double TURRET_SAFE_TO_RETRACT_FOURBAR_RANGE = 2;
 
     private final double FOURBAR_MAX_SPEED = 0.5; // The speed the 4b will always run at while doing any movement
     private final double TURRET_MAX_SPEED = 0.3; // Max speed of the turret
@@ -80,8 +80,8 @@ public class ArmSystem {
         // Check if the fourbar is high enough and that the input angle is within the safe limit before moving
         if (fourbarIsSafeForTurretMovement() && (degrees > TURRET_SAFERANGE_MIN && degrees < TURRET_SAFERANGE_MAX)) {
             turret.setTargetPosition((int) (degrees * TURRET_TICKS_PER_DEGREE));
-            turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             turret.setPower(TURRET_MAX_SPEED);
+            turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
     }
 
