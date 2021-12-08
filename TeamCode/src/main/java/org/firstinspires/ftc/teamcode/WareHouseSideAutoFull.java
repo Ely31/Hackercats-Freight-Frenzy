@@ -75,7 +75,7 @@ public class WareHouseSideAutoFull extends LinearOpMode {
             telemetry.addData("going to level", hubActiveLevel);
             telemetry.update();
 
-           if (pipelineThrottle.milliseconds() > 2000) {// Throttle loop times to 2 seconds
+           if (pipelineThrottle.milliseconds() > 1000) {// Throttle loop times to 2 seconds
                // Update startpos to match side
                startPos = new Pose2d(11.4,(-(originToWall-9))*side, Math.toRadians(-90*side));
                drive.setPoseEstimate(startPos);
@@ -145,6 +145,7 @@ public class WareHouseSideAutoFull extends LinearOpMode {
             AutoToTele.endOfAutoHeading = drive.getExternalHeading();
             // Save this information to a class so we can use it in tele to calibate feild centric
 
+            // For debug purposes
             telemetry.addData("endheading",Math.toDegrees( AutoToTele.endOfAutoHeading));
             telemetry.update();
             sleep(2*1000);

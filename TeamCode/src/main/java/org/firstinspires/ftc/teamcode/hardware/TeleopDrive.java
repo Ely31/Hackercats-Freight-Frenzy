@@ -46,7 +46,7 @@ public class TeleopDrive {
 
         multiplier = (-0.65*multiplier)+1;
 
-        heading = -(imu.getAngularOrientation().firstAngle + (AutoToTele.endOfAutoHeading+Math.toRadians(90 * -AutoToTele.allianceSide)));
+        heading = -(imu.getAngularOrientation().firstAngle + (AutoToTele.endOfAutoHeading-Math.toRadians(90 * AutoToTele.allianceSide)));
 
         rotX = x * Math.cos(heading) - -y * Math.sin(heading);
         rotY = x * Math.sin(heading) + -y * Math.cos(heading);
@@ -63,7 +63,7 @@ public class TeleopDrive {
     }
 
     public void resetHeading(){
-        AutoToTele.endOfAutoHeading = Math.PI/2; // Unit circle coming in handy
+        AutoToTele.endOfAutoHeading = (Math.PI/2)*AutoToTele.allianceSide; // Unit circle coming in handy
         imu.initialize(imuParameters);
     }
 }
