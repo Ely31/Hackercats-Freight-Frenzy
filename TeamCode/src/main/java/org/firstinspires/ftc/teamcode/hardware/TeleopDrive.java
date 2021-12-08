@@ -16,8 +16,8 @@ public class TeleopDrive {
     private BNO055IMU imu;
     public double heading;
 
-    double rotX;
-    double rotY;
+    private double rotX;
+    private double rotY;
 
     BNO055IMU.Parameters imuParameters;
 

@@ -8,8 +8,8 @@ public class CarouselSpinner {
 
     private DcMotor carousel;
 
-    private final double ticksPerRotation = 103.8;
-    private final double maxSpeed = 0.16;
+    private final double TICKS_PER_ROTATION = 103.8;
+    private final double MAX_SPEED = 0.17;
 
     public void init(HardwareMap hwmap){
         carousel = hwmap.get(DcMotor.class,"carousel");
@@ -17,7 +17,7 @@ public class CarouselSpinner {
     }
 
     public void spinRotations(double rotations,double speed){ // Set the target pos to a number of rotations from the current pos
-        carousel.setTargetPosition((int) (carousel.getCurrentPosition()+(rotations*ticksPerRotation)));
+        carousel.setTargetPosition((int) (carousel.getCurrentPosition()+(rotations* TICKS_PER_ROTATION)));
         carousel.setPower(speed);
         carousel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
@@ -28,6 +28,6 @@ public class CarouselSpinner {
 
     public void setSpeed(float input){
         carousel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        carousel.setPower(input*maxSpeed);
+        carousel.setPower(input* MAX_SPEED);
     }
 }

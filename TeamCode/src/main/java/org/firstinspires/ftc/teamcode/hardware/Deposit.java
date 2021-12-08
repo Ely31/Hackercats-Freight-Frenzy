@@ -11,40 +11,39 @@ public class Deposit {
     private Servo pusher;
     private Servo door;
 
-    double pusherhome; // The retracted position of the pusher
-    double doorhome; // The closed position of the door
+    double PUSHER_HOME_POSITION = 0.05; // The retracted position of the pusher
+    double DOOR_HOME_POSITION = 0.1; // The closed position of the door
+    double PUSHER_PUSHING_POSITION = 0.45;
+    double DOOR_OPEN_POSITION = 0.6;
 
     //time to wait before we close the door and reset
     // the pusher after the freight has fallen out
-    public static int falltime = 300;
+    private final int FALL_TIME = 300;
 
     public void init(HardwareMap hwmap) {
         pusher = hwmap.get(Servo.class, "pusher");
         door = hwmap.get(Servo.class, "door");
 
-        pusherhome = 0.05;
-        doorhome = 0.1;
-
-        pusher.setPosition(pusherhome);
-        door.setPosition(doorhome);
+        pusher.setPosition(PUSHER_HOME_POSITION);
+        door.setPosition(DOOR_HOME_POSITION);
     }
 
     public void dump(ElapsedTime time){
-        if (time.milliseconds() > 0 && time.milliseconds() < falltime){
+        if (time.milliseconds() > 0 && time.milliseconds() < FALL_TIME){
             doorOpen();
             push();// Open the door if the timer is less than pusherlag
         }
-        if (time.milliseconds() > falltime) reset(); // Reset deposit after falltime is over
+        if (time.milliseconds() > FALL_TIME) reset(); // Reset deposit after falltime is over
     }
 
     public void reset(){
-        pusher.setPosition(pusherhome);
-        door.setPosition(doorhome);
+        pusher.setPosition(PUSHER_HOME_POSITION);
+        door.setPosition(DOOR_HOME_POSITION);
     }
     public void doorOpen(){
-        door.setPosition(0.6);
+        door.setPosition(DOOR_OPEN_POSITION);
     }
     public void push(){
-        pusher.setPosition(0.45);
+        pusher.setPosition(PUSHER_PUSHING_POSITION);
     }
 }

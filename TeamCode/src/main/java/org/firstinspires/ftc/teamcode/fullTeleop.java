@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.hardware.CapMech;
 import org.firstinspires.ftc.teamcode.hardware.CarouselSpinner;
 import org.firstinspires.ftc.teamcode.hardware.Deposit;
 import org.firstinspires.ftc.teamcode.hardware.FourBar;
@@ -20,8 +21,10 @@ public class fullTeleop extends LinearOpMode {
     Deposit deposit = new Deposit();
     FourBar fourBar = new FourBar();
     CarouselSpinner carouselSpinner = new CarouselSpinner();
+    CapMech capMech = new CapMech();
 
-    TruePress truegp2a = new TruePress();
+    TruePress fourbarToggleInput = new TruePress();
+    TruePress capMechToggleInput = new TruePress();
 
     ElapsedTime dumptime = new ElapsedTime();
 
@@ -32,6 +35,8 @@ public class fullTeleop extends LinearOpMode {
 
     FourBarState fourBarState = FourBarState.RETRACTED;
 
+    boolean capMechState = false; // True means extended, false means retracted
+
     @Override
     public void runOpMode() {
         // Init
@@ -40,9 +45,10 @@ public class fullTeleop extends LinearOpMode {
         deposit.init(hardwareMap);
         fourBar.init(hardwareMap);
         carouselSpinner.init(hardwareMap);
+        capMech.init(hardwareMap);
 
         dumptime.reset();
-        sleep(300); // Hack to fix deposit firing if you init too quickly
+        sleep(200); // Hack to fix deposit firing if you init too quickly
 
         telemetry.addLine("Initialized");
         telemetry.update();
@@ -75,14 +81,14 @@ public class fullTeleop extends LinearOpMode {
             switch (fourBarState) { // Gamepad2 A toggles the extended/retracted state of the 4b
                 case RETRACTED:
                     fourBar.retract();
-                    if (truegp2a.trueInput(gamepad2.a)) {
+                    if (fourbarToggleInput.trueInput(gamepad2.a)) {
                         fourBar.runToLevel(fourBar.activeLevel);
                     fourBarState = FourBarState.EXTENDED;
                     }
                     break;
                 case EXTENDED:
                     fourBar.runToLevel(fourBar.activeLevel);
-                    if (truegp2a.trueInput(gamepad2.a)) {
+                    if (fourbarToggleInput.trueInput(gamepad2.a)) {
                         fourBarState = FourBarState.RETRACTED;
                     }
                     break;
@@ -94,6 +100,16 @@ public class fullTeleop extends LinearOpMode {
             // turn it one way and the right trigger turn it the opposite way
 
             if (gamepad2.back) intake.dropIntake(); // In case this doesn't happen in auto for some reason
+
+            // Cap mech control
+            // Toggle retracted/extended state of the cap mech
+            if (capMechToggleInput.trueInput(gamepad2.left_bumper)) capMechState = !capMechState;
+
+            if (capMechState) capMech.extend();
+            else capMech.retract();
+
+            if (capMechState && gamepad2.right_bumper) capMech.openGripper();
+            else capMech.closeGripper();
         }
     }
 }

@@ -7,13 +7,13 @@ public class FourBar {
 
     private DcMotor fourBar;
 
-    private final double ticksPerRev = 1425.1*2; // *2 because of the external gear ratio
-    private final double ticksPerDegree = ticksPerRev/360.0;
-    private final double speed = 0.5; // The speed the 4b will always run at while doing any movement
+    private final double TICKS_PER_REV = 1425.1*2; // *2 because of the external gear ratio
+    private final double TICKS_PER_DEGREE = TICKS_PER_REV /360.0;
+    private final double SPEED = 0.5; // The speed the 4b will always run at while doing any movement
 
     // Define the safe range
-    private final double safeRangeMin = -0.5;
-    private final double safeRangeMax = 110;
+    private final double SAFE_RANGE_MIN = -0.5;
+    private final double SAFE_RANGE_MAX = 110;
 
     // Positions of the 4b, in degrees, of the 3 levels we want it to run to
     public double level1 = 25;
@@ -29,14 +29,14 @@ public class FourBar {
     }
 
     public void runToAngle(double angle){ // Converts angle input to ticks and runs the motor there after checking if it's safe
-       if (angle > safeRangeMin && angle < safeRangeMax) fourBar.setTargetPosition((int) (angle*ticksPerDegree));
+       if (angle > SAFE_RANGE_MIN && angle < SAFE_RANGE_MAX) fourBar.setTargetPosition((int) (angle* TICKS_PER_DEGREE));
        // Checks if the angle is in a safe range before running there
         // We don't want to make a mistake in the code and break the 4b because of it (or driver error)
-        else if (angle < safeRangeMin) fourBar.setTargetPosition((int)(safeRangeMin*ticksPerDegree));
+        else if (angle < SAFE_RANGE_MIN) fourBar.setTargetPosition((int)(SAFE_RANGE_MIN * TICKS_PER_DEGREE));
         // If the input angle is below the safe range, run the 4b to the minimum of the range
-        else if (angle > safeRangeMax) fourBar.setTargetPosition((int)(safeRangeMax*ticksPerDegree));
+        else if (angle > SAFE_RANGE_MAX) fourBar.setTargetPosition((int)(SAFE_RANGE_MAX * TICKS_PER_DEGREE));
         // If the input angle is above the safe range, run the 4b to the to maximum of the range
-        fourBar.setPower(speed);
+        fourBar.setPower(SPEED);
         fourBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
