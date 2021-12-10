@@ -1,15 +1,17 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+@Config
 public class CarouselSpinner {
 
     private DcMotor carousel;
 
     private final double TICKS_PER_ROTATION = 103.8;
-    private final double MAX_SPEED = 0.17;
+    public static double MAX_SPEED = 0.22;
 
     public void init(HardwareMap hwmap){
         carousel = hwmap.get(DcMotor.class,"carousel");
