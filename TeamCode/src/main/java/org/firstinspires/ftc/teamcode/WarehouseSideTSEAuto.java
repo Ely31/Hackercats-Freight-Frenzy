@@ -111,7 +111,8 @@ public class WarehouseSideTSEAuto extends LinearOpMode {
                switch (hubActiveLevel) {
                    case 1:
                        depositPos = new Pose2d(-7.0, -43*side, Math.toRadians(-70*side));
-                       tsePos = farTsePosition;
+                       if (side == 1) tsePos = farTsePosition; // Switch close and far positions on blue alliance
+                       else tsePos = closeTsePosition;
                        break;
                    case 2:
                        depositPos = new Pose2d(-7, -44*side, Math.toRadians(-70*side));
@@ -119,7 +120,8 @@ public class WarehouseSideTSEAuto extends LinearOpMode {
                        break;
                    case 3:
                        depositPos = new Pose2d(-7, -43*side, Math.toRadians(-70*side));
-                       tsePos = closeTsePosition;
+                       if (side == 1) tsePos = closeTsePosition;  // Switch close and far positions on blue alliance
+                       else tsePos = farTsePosition;
                        break;
                }
 
