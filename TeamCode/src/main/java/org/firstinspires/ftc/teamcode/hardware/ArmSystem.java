@@ -15,7 +15,7 @@ public class ArmSystem {
     private final double TURRET_TICKS_PER_DEGREE = TURRET_TICKS_PER_REV/360.0;
 
     // Define the safe range of the 4b
-    private final double FOURBAR_SAFERANGE_MIN = -0.5;
+    private double fourBarSafeRangeMin = -0.5; // This will be increased if the turret is rotated
     private final double FOURBAR_SAFERANGE_MAX = 110;
     private final double FOURBAR_SAFE_TO_SPIN_TURRET_ANGLE = 20;
 
@@ -53,8 +53,14 @@ public class ArmSystem {
     }
 
     public boolean turretIsSafeForFourbarRetracting(){
-        if (Math.abs(getTurretAngle()) > TURRET_SAFE_TO_RETRACT_FOURBAR_RANGE) return true;
-        else return false;
+        if (Math.abs(getTurretAngle()) < TURRET_SAFE_TO_RETRACT_FOURBAR_RANGE){
+            fourBarSafeRangeMin = 0;
+            return true;
+        }
+        else {
+            fourBarSafeRangeMin = FOURBAR_SAFE_TO_SPIN_TURRET_ANGLE;
+            return false;
+        }
     }
 
     public boolean fourbarIsSafeForTurretMovement(){
@@ -63,12 +69,12 @@ public class ArmSystem {
     }
 
     public void fourbarRunToAngle(double angle){ // Converts angle input to ticks and runs the motor there after checking if it's safe
-        if ((angle > FOURBAR_SAFERANGE_MIN && angle < FOURBAR_SAFERANGE_MAX)) {
+        if ((angle > fourBarSafeRangeMin && angle < FOURBAR_SAFERANGE_MAX)) {
             fourBar.setTargetPosition((int) (angle* FOURBAR_TICKS_PER_DEGREE));
         }
             // Checks if the angle is in a safe range before running there
             // We don't want to make a mistake in the code and break the 4b because of it (or driver error)
-        else if (angle < FOURBAR_SAFERANGE_MIN) fourBar.setTargetPosition((int)(FOURBAR_SAFERANGE_MIN * FOURBAR_TICKS_PER_DEGREE));
+        else if (angle < fourBarSafeRangeMin) fourBar.setTargetPosition((int)(fourBarSafeRangeMin * FOURBAR_TICKS_PER_DEGREE));
             // If the input angle is below the safe range, run the 4b to the minimum of the range
         else if (angle > FOURBAR_SAFERANGE_MAX) fourBar.setTargetPosition((int)(FOURBAR_SAFERANGE_MAX * FOURBAR_TICKS_PER_DEGREE));
         // If the input angle is above the safe range, run the 4b to the to maximum of the range
