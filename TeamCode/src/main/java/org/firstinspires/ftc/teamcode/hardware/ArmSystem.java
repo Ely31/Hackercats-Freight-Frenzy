@@ -52,7 +52,7 @@ public class ArmSystem {
         return (turret.getCurrentPosition()/TURRET_TICKS_PER_DEGREE);
     }
 
-    public boolean turretIsSafeForFourbarRetracting(){
+    public boolean FourbarSafeToRetract(){
         if (Math.abs(getTurretAngle()) < TURRET_SAFE_TO_RETRACT_FOURBAR_RANGE){
             fourBarSafeRangeMin = 0;
             return true;
@@ -63,7 +63,7 @@ public class ArmSystem {
         }
     }
 
-    public boolean fourbarIsSafeForTurretMovement(){
+    public boolean TurretSafeToMove(){
         if (getFourbarAngle() > FOURBAR_SAFE_TO_SPIN_TURRET_ANGLE) return true;
         else return false;
     }
@@ -84,7 +84,7 @@ public class ArmSystem {
 
     public void turretRunToAngle(double degrees){
         // Check if the fourbar is high enough and that the input angle is within the safe limit before moving
-        if (fourbarIsSafeForTurretMovement() && (degrees > TURRET_SAFERANGE_MIN && degrees < TURRET_SAFERANGE_MAX)) {
+        if (TurretSafeToMove() && (degrees > TURRET_SAFERANGE_MIN && degrees < TURRET_SAFERANGE_MAX)) {
             turret.setTargetPosition((int) (degrees * TURRET_TICKS_PER_DEGREE));
             turret.setPower(TURRET_MAX_SPEED);
             turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
