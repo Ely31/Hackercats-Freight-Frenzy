@@ -11,9 +11,9 @@ public class Deposit {
     private Servo pusher;
     private Servo door;
 
-    double PUSHER_HOME_POSITION = 0.05; // The retracted position of the pusher
+    double PUSHER_HOME_POSITION = 0; // The retracted position of the pusher
     double DOOR_HOME_POSITION = 0.1; // The closed position of the door
-    double PUSHER_PUSHING_POSITION = 0.45;
+    double PUSHER_PUSHING_POSITION = 0.4;
     double DOOR_OPEN_POSITION = 0.6;
 
     //time to wait before we close the door and reset

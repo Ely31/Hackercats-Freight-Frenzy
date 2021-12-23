@@ -8,7 +8,6 @@ import org.firstinspires.ftc.teamcode.hardware.ArmSystem;
 import org.firstinspires.ftc.teamcode.hardware.CapMech;
 import org.firstinspires.ftc.teamcode.hardware.CarouselSpinner;
 import org.firstinspires.ftc.teamcode.hardware.Deposit;
-import org.firstinspires.ftc.teamcode.hardware.FourBar;
 import org.firstinspires.ftc.teamcode.hardware.Intake;
 import org.firstinspires.ftc.teamcode.hardware.TeleopDrive;
 import org.firstinspires.ftc.teamcode.util.TruePress;
@@ -83,7 +82,6 @@ public class TurretTeleop extends LinearOpMode {
                 case RETRACTED:
                     armSystem.setArmPosition(0,0); // Retract arm
                     if (fourbarToggleInput.trueInput(gamepad2.a)) {
-                        armSystem.runToLevel(armSystem.activeLevel);
                     fourBarState = FourBarState.EXTENDED;
                     }
                     break;

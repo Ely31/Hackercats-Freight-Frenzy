@@ -52,14 +52,12 @@ public class ArmSystem {
         return (turret.getCurrentPosition()/TURRET_TICKS_PER_DEGREE);
     }
 
-    public boolean FourbarSafeToRetract(){
+    public void updateFourBarMin(){
         if (Math.abs(getTurretAngle()) < TURRET_SAFE_TO_RETRACT_FOURBAR_RANGE){
             fourBarSafeRangeMin = 0;
-            return true;
         }
         else {
             fourBarSafeRangeMin = FOURBAR_SAFE_TO_SPIN_TURRET_ANGLE;
-            return false;
         }
     }
 
@@ -68,7 +66,8 @@ public class ArmSystem {
         else return false;
     }
 
-    public void fourbarRunToAngle(double angle){ // Converts angle input to ticks and runs the motor there after checking if it's safe
+    public void fourbarRunToAngle(double angle){// Converts angle input to ticks and runs the motor there after checking if it's safe
+        updateFourBarMin();
         if ((angle > fourBarSafeRangeMin && angle < FOURBAR_SAFERANGE_MAX)) {
             fourBar.setTargetPosition((int) (angle* FOURBAR_TICKS_PER_DEGREE));
         }
