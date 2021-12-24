@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.vision;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -9,21 +8,17 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-@Disabled
 public class SkystoneStyleThreshold extends OpenCvPipeline {
-    /*
-     * An enum to define the skystone position
-     */
-    public enum SkystonePosition
+
+    //An enum to define the TSE position
+    public enum TSEPosition
     {
         LEFT,
         CENTER,
         RIGHT
     }
 
-    /*
-     * Some color constants
-     */
+    // Some color constants
     public final Scalar BLUE = new Scalar(0, 0, 255);
     public final Scalar GREEN = new Scalar(0, 255, 0);
 
@@ -36,9 +31,7 @@ public class SkystoneStyleThreshold extends OpenCvPipeline {
     final static int frameHeight = 240;
     final static int topOfReigions = 100;
 
-    /*
-     * The core values which define the location and size of the sample regions
-     */
+    // The core values which define the location and size of the sample regions
     static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(0,topOfReigions);
     static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(thirdWidth,topOfReigions);
     static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(thirdWidth*2,topOfReigions);
@@ -64,28 +57,16 @@ public class SkystoneStyleThreshold extends OpenCvPipeline {
             REGION3_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
             REGION3_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
 
-    /*
-     * Working variables
-     */
-    Mat region1_Cb, region2_Cb, region3_Cb;
+
+    Mat region1_Binary, region2_Binary, region3_Binary;
     Mat YCrCb = new Mat();
-    Mat Cb = new Mat();
     Mat Binary = new Mat();
     int avg1, avg2, avg3;
 
     // Volatile since accessed by OpMode thread w/o synchronization
-    private volatile SkystonePosition position = SkystonePosition.LEFT;
+    private volatile TSEPosition position = TSEPosition.LEFT;
 
-    /*
-     * This function takes the RGB frame, converts to YCrCb,
-     * and extracts the Cb channel to the 'Cb' variable
-     */
-    void inputToCb(Mat input)
-    {
-        Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
-        Core.extractChannel(YCrCb, Cb, 2);
-    }
-
+    // Converts to YCrCb and then thresholds
     void ThresholdInput(Mat input){
         Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
         Core.inRange(YCrCb, lower, upper, Binary);
@@ -103,69 +84,38 @@ public class SkystoneStyleThreshold extends OpenCvPipeline {
          * buffer would be re-allocated the first time a real frame
          * was crunched)
          */
-        inputToCb(firstFrame);
+        ThresholdInput(firstFrame);
 
-        /*
-         * Submats are a persistent reference to a region of the parent
-         * buffer. Any changes to the child affect the parent, and the
-         * reverse also holds true.
-         */
-        region1_Cb = Cb.submat(new Rect(region1_pointA, region1_pointB));
-        region2_Cb = Cb.submat(new Rect(region2_pointA, region2_pointB));
-        region3_Cb = Cb.submat(new Rect(region3_pointA, region3_pointB));
+        region1_Binary = Binary.submat(new Rect(region1_pointA, region1_pointB));
+        region2_Binary = Binary.submat(new Rect(region2_pointA, region2_pointB));
+        region3_Binary = Binary.submat(new Rect(region3_pointA, region3_pointB));
     }
 
     @Override
     public Mat processFrame(Mat input)
     {
-        /*
-         * Overview of what we're doing:
-         *
-         * We first convert to YCrCb color space, from RGB color space.
-         * Why do we do this? Well, in the RGB color space, chroma and
-         * luma are intertwined. In YCrCb, chroma and luma are separated.
-         * YCrCb is a 3-channel color space, just like RGB. YCrCb's 3 channels
-         * are Y, the luma channel (which essentially just a B&W image), the
-         * Cr channel, which records the difference from red, and the Cb channel,
-         * which records the difference from blue. Because chroma and luma are
-         * not related in YCrCb, vision code written to look for certain values
-         * in the Cr/Cb channels will not be severely affected by differing
-         * light intensity, since that difference would most likely just be
-         * reflected in the Y channel.
-        
-         * Get the Cb channel of the input frame after conversion to YCrCb
-         */
-        inputToCb(input);
-
+        ThresholdInput(input);
         /*
          * Compute the average pixel value of each submat region. We're
-         * taking the average of a single channel buffer, so the value
-         * we need is at index 0. We could have also taken the average
-         * pixel value of the 3-channel image, and referenced the value
-         * at index 2 here.
+         * taking the average of a single channel binary Mat, so the value
+         * we need is at index 0.
          */
-        avg1 = (int) Core.mean(region1_Cb).val[0];
-        avg2 = (int) Core.mean(region2_Cb).val[0];
-        avg3 = (int) Core.mean(region3_Cb).val[0];
+        avg1 = (int) Core.mean(region1_Binary).val[0];
+        avg2 = (int) Core.mean(region2_Binary).val[0];
+        avg3 = (int) Core.mean(region3_Binary).val[0];
 
-        /*
-         * Draw rectangles showing the sample regions on the screen.
-         * Simply a visual aid. Serves no functional purpose.
-         */
+        // Draw rectangles showing the sample regions on the screen.
         Imgproc.rectangle(
                 input, // Buffer to draw on
                 region1_pointA, // First point which defines the rectangle
                 region1_pointB, // Second point which defines the rectangle
                 BLUE, // The color the rectangle is drawn in
                 1); // Thickness of the rectangle lines
-
         // Draw the rest of the regions
         Imgproc.rectangle(input, region2_pointA,region2_pointB,BLUE,1);
         Imgproc.rectangle(input,region3_pointA,region3_pointB,BLUE,1);
 
-        /*
-         * Find the max of the 3 averages
-         */
+        // Find the max of the 3 averages
         int maxOneTwo = Math.max(avg1, avg2);
         int max = Math.max(maxOneTwo, avg3);
 
@@ -175,27 +125,24 @@ public class SkystoneStyleThreshold extends OpenCvPipeline {
          */
         if(max == avg1) // Was it from region 1?
         {
-            position = SkystonePosition.LEFT; // Record our analysis
+            position = TSEPosition.LEFT; // Record our analysis
 
-            /*
-             * Draw a solid rectangle on top of the chosen region.
-             * Simply a visual aid. Serves no functional purpose.
-             */
+            // Draw a solid rectangle on top of the chosen region.
             Imgproc.rectangle(
                     input, // Buffer to draw on
                     region1_pointA, // First point which defines the rectangle
                     region1_pointB, // Second point which defines the rectangle
                     GREEN, // The color the rectangle is drawn in
-                    2); // Negative thickness means solid fill
+                    2); // Thickness of the rectangle lines
         }
         else if(max == avg2) // Was it from region 2?
         {
-            position = SkystonePosition.CENTER; // Record our analysis
+            position = TSEPosition.CENTER; // Record our analysis
             Imgproc.rectangle(input,region2_pointA,region2_pointB,GREEN,2);
         }
         else if(max == avg3) // Was it from region 3?
         {
-            position = SkystonePosition.RIGHT; // Record our analysis
+            position = TSEPosition.RIGHT; // Record our analysis
             Imgproc.rectangle(input,region3_pointA,region3_pointB,GREEN,2);
         }
 
@@ -207,10 +154,8 @@ public class SkystoneStyleThreshold extends OpenCvPipeline {
         return input;
     }
 
-    /*
-     * Call this from the OpMode thread to obtain the latest analysis
-     */
-    public SkystonePosition getAnalysis()
+    // Call this from the OpMode to obtain the latest analysis
+    public TSEPosition getAnalysis()
     {
         return position;
     }
