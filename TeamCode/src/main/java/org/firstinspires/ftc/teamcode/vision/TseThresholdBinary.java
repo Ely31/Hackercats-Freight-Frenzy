@@ -1,12 +1,15 @@
 package org.firstinspires.ftc.teamcode.vision;
 
+import com.acmerobotics.dashboard.config.Config;
+
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-public class tseThresholdBinary extends OpenCvPipeline {
+@Config
+public class TseThresholdBinary extends OpenCvPipeline {
 
     /*
      * These are our variables that will be
@@ -22,8 +25,8 @@ public class tseThresholdBinary extends OpenCvPipeline {
      * min and max values here for now, meaning
      * that all pixels will be shown.
      */
-    public Scalar lower = new Scalar(0, 65, 40);
-    public Scalar upper = new Scalar(255, 115, 130);
+    public static Scalar lower = new Scalar(0, 65, 40);
+    public static Scalar upper = new Scalar(255, 115, 130);
 
     /*
      * A good practice when typing EOCV pipelines is
