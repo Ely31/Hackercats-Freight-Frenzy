@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.hardware.TeleopDrive;
 import org.firstinspires.ftc.teamcode.util.TruePress;
 
 @TeleOp
-public class fullTeleop extends LinearOpMode {
+public class Teleop extends LinearOpMode {
     // Pre-init
 
     TeleopDrive drive = new TeleopDrive();

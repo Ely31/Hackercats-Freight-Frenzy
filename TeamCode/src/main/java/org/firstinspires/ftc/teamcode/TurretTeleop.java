@@ -74,19 +74,23 @@ public class TurretTeleop extends LinearOpMode {
             else if (gamepad2.b) armSystem.activeLevel = 3;
 
             // Tune the height of the active 4b level to account for shipping hub inbalance
-            if (gamepad2.dpad_up) armSystem.editFourbarLevelOffset(0.1); // This number is small because it's added every loop
-            if (gamepad2.dpad_down) armSystem.editFourbarLevelOffset(-0.1);
+            if (gamepad2.dpad_up) armSystem.editFourbarLevelOffset(0.15); // This number is small because it's added every loop
+            if (gamepad2.dpad_down) armSystem.editFourbarLevelOffset(-0.15);
 
             // Four bar control
             switch (fourBarState) { // Gamepad2 A toggles the extended/retracted state of the 4b
                 case RETRACTED:
                     armSystem.setArmPosition(0,0); // Retract arm
+                    armSystem.turretTargetAngle = 0; // Reset turret angle so that when the arm is first extended the turret doesn't move
                     if (fourbarToggleInput.trueInput(gamepad2.a)) {
                     fourBarState = FourBarState.EXTENDED;
                     }
                     break;
                 case EXTENDED:
-                    armSystem.runToLevel(armSystem.activeLevel);
+                    // Run the 4b and turret to their desired positions
+                    armSystem.setArmPosition(armSystem.levelToAngle(armSystem.activeLevel), armSystem.turretTargetAngle);
+                    if (gamepad2.left_bumper) armSystem.turretTargetAngle =- 1; // Change turret angle with bumpers
+                    if (gamepad2.right_bumper) armSystem.turretTargetAngle =+ 1;// Change turret angle with bumpers
                     if (fourbarToggleInput.trueInput(gamepad2.a)) {
                         fourBarState = FourBarState.RETRACTED;
                     }

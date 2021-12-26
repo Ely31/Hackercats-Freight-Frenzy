@@ -11,7 +11,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.hardware.Camera;
 import org.firstinspires.ftc.teamcode.hardware.CapMech;
+import org.firstinspires.ftc.teamcode.hardware.CarouselSpinner;
 import org.firstinspires.ftc.teamcode.hardware.Deposit;
+import org.firstinspires.ftc.teamcode.vision.EocvBarcodePipeline;
 import org.firstinspires.ftc.teamcode.hardware.FourBar;
 import org.firstinspires.ftc.teamcode.hardware.Intake;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
@@ -19,7 +21,7 @@ import org.firstinspires.ftc.teamcode.util.AutoToTele;
 import org.firstinspires.ftc.teamcode.vision.SkystoneStyleThreshold;
 
 @Autonomous
-public class WarehouseSideTSEAuto extends LinearOpMode {
+public class CarouselTSEAuto extends LinearOpMode {
     // Pre-init
     Camera webcam  = new Camera();
     SkystoneStyleThreshold pipeline = new SkystoneStyleThreshold();
@@ -27,6 +29,7 @@ public class WarehouseSideTSEAuto extends LinearOpMode {
     FourBar fourBar = new FourBar();
     Deposit deposit = new Deposit();
     Intake intake = new Intake();
+    CarouselSpinner carouselMech = new CarouselSpinner();
     CapMech capMech = new CapMech();
 
     int hubActiveLevel = 0;
@@ -34,7 +37,8 @@ public class WarehouseSideTSEAuto extends LinearOpMode {
     int side; // Red alliance is 1, blue is -1
 
     final double originToWall = 141.0/2.0; // I guess the field is actually 141 inches wide
-    final double wallDistance = originToWall - 6.5; // Center of bot is 6.5in from wall
+    final double carouselXCoordinate = -55;
+    final double carouselYCoordinate = -58;
 
     // Realative to warehouse
     private Pose2d farTsePosition;
@@ -46,7 +50,7 @@ public class WarehouseSideTSEAuto extends LinearOpMode {
     Pose2d tsePos;
     Trajectory depositPreLoad;
     TrajectorySequence pickUpTSE;
-    TrajectorySequence park;
+    TrajectorySequence carouselAndPark;
 
     @Override
     public void runOpMode() {
@@ -58,6 +62,7 @@ public class WarehouseSideTSEAuto extends LinearOpMode {
         fourBar.init(hardwareMap);
         deposit.init(hardwareMap);
         intake.init(hardwareMap);
+        carouselMech.init(hardwareMap);
         capMech.init(hardwareMap);
 
         ElapsedTime depositTimer = new ElapsedTime();
@@ -67,7 +72,7 @@ public class WarehouseSideTSEAuto extends LinearOpMode {
 
         AutoToTele.allianceSide = 1;
 
-        tsePos = new Pose2d(12,-50*side,Math.toRadians(225*side));
+        tsePos = new Pose2d(-27.2,-50*side,Math.toRadians(-90*side));
 
         while (!isStarted()&&!isStopRequested()){ // Init loop
 
@@ -88,12 +93,12 @@ public class WarehouseSideTSEAuto extends LinearOpMode {
 
            if (pipelineThrottle.milliseconds() > 1000) {// Throttle loop times to 1 second
                // Update startpos to match side
-               startPos = new Pose2d(11.4,(-(originToWall-9))*side, Math.toRadians(-90*side));
-               drive.setPoseEstimate(startPos); // Set pose estimate to match which side of the field we're on
+               startPos = new Pose2d(-35,(-(originToWall-9))*side, Math.toRadians(-90*side));
+               drive.setPoseEstimate(startPos);
 
-               farTsePosition = new Pose2d(3.2,-50*side,Math.toRadians(-90*side));
-               middleTsePosition = new Pose2d(11.8,-50*side,Math.toRadians(-90*side));
-               closeTsePosition = new Pose2d(8,-45*side,Math.toRadians(225*side));
+               farTsePosition = new Pose2d(-43.4,-50*side,Math.toRadians(-90*side));
+               middleTsePosition = new Pose2d(-35,-50*side,Math.toRadians(-90*side));
+               closeTsePosition = new Pose2d(-27.2,-50*side,Math.toRadians(-90*side));
 
                switch (pipeline.getAnalysis()){
                    case LEFT:
@@ -109,22 +114,21 @@ public class WarehouseSideTSEAuto extends LinearOpMode {
 
                switch (hubActiveLevel) {
                    case 1:
-                       depositPos = new Pose2d(-7.0, -43*side, Math.toRadians(-70*side));
+                       depositPos = new Pose2d(-16.60, -43*side, Math.toRadians(250*side));
                        if (side == 1) tsePos = farTsePosition; // Switch close and far positions on blue alliance
                        else tsePos = closeTsePosition;
                        break;
                    case 2:
-                       depositPos = new Pose2d(-7, -44*side, Math.toRadians(-70*side));
+                       depositPos = new Pose2d(-16.6, -44*side, Math.toRadians(250*side));
                        tsePos = middleTsePosition;
                        break;
                    case 3:
-                       depositPos = new Pose2d(-7, -43*side, Math.toRadians(-70*side));
+                       depositPos = new Pose2d(-16.6, -43*side, Math.toRadians(250*side));
                        if (side == 1) tsePos = closeTsePosition;  // Switch close and far positions on blue alliance
                        else tsePos = farTsePosition;
                        break;
                }
 
-               // Tse pick up trajectory
                pickUpTSE = drive.trajectorySequenceBuilder(startPos)
                        .addTemporalMarker(() ->{
                            capMech.openGripper();
@@ -137,23 +141,21 @@ public class WarehouseSideTSEAuto extends LinearOpMode {
                        .addTemporalMarker(() -> capMech.retract())
                        .build();
 
-               // Deposit trajectory
                depositPreLoad = drive.trajectoryBuilder(pickUpTSE.end())
                        .lineToSplineHeading(depositPos)
                        .build();
 
-               // Park trajectory
-               park = drive.trajectorySequenceBuilder(depositPreLoad.end())
-                       .lineToSplineHeading(new Pose2d(0, -wallDistance*side, Math.toRadians(0*side)))
+               carouselAndPark = drive.trajectorySequenceBuilder(depositPreLoad.end())
                        .addTemporalMarker(0.5, () -> fourBar.retract())
-                       .lineToSplineHeading(new Pose2d(36, -wallDistance*side, Math.toRadians(0*side))) // Go into warehouse
-                       .lineTo(new Vector2d(36,(-(originToWall-34))*side))
-                       .forward(18)
+                       .lineToSplineHeading(new Pose2d(carouselXCoordinate, carouselYCoordinate*side, Math.toRadians(0*side))) // Go to carousel
+                       .addTemporalMarker(() -> {
+                           carouselMech.deliver(side); // Spin carousel
+                               })
+                       .waitSeconds(3.5)
+                       .lineTo(new Vector2d(carouselXCoordinate+7,carouselYCoordinate*side)) // Back off carousel
+                       .lineToSplineHeading(new Pose2d(-62,-33*side,Math.toRadians(0*side))) // Park
                        .build();
 
-               // Telemetry
-               telemetry.addData("going to level", hubActiveLevel);
-               telemetry.update();
                pipelineThrottle.reset(); // Reset the throttle timer so the whole thing loops
            } // End of throttled section
         }// End of init loop
@@ -170,7 +172,7 @@ public class WarehouseSideTSEAuto extends LinearOpMode {
             deposit.dump(depositTimer); // Dump
             sleep(1000); // Wait for that dump to finish
             deposit.dump(depositTimer);
-            drive.followTrajectorySequence(park); // Park in warehouse
+            drive.followTrajectorySequence(carouselAndPark); // Park in warehouse
             intake.dropIntake();
 
             AutoToTele.endOfAutoPose = drive.getPoseEstimate();
