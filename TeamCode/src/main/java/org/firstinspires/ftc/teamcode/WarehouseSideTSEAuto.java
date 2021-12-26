@@ -12,17 +12,17 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.hardware.Camera;
 import org.firstinspires.ftc.teamcode.hardware.CapMech;
 import org.firstinspires.ftc.teamcode.hardware.Deposit;
-import org.firstinspires.ftc.teamcode.vision.EocvBarcodePipeline;
 import org.firstinspires.ftc.teamcode.hardware.FourBar;
 import org.firstinspires.ftc.teamcode.hardware.Intake;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.util.AutoToTele;
+import org.firstinspires.ftc.teamcode.vision.SkystoneStyleThreshold;
 
 @Autonomous
 public class WarehouseSideTSEAuto extends LinearOpMode {
     // Pre-init
     Camera webcam  = new Camera();
-    EocvBarcodePipeline pipeline = new EocvBarcodePipeline();
+    SkystoneStyleThreshold pipeline = new SkystoneStyleThreshold();
     SampleMecanumDrive drive;
     FourBar fourBar = new FourBar();
     Deposit deposit = new Deposit();
@@ -95,15 +95,14 @@ public class WarehouseSideTSEAuto extends LinearOpMode {
                middleTsePosition = new Pose2d(11.8,-50*side,Math.toRadians(-90*side));
                closeTsePosition = new Pose2d(8,-45*side,Math.toRadians(225*side));
 
-               switch (pipeline.getBarcodePos()){
-                   case 1:
+               switch (pipeline.getAnalysis()){
+                   case LEFT:
                        hubActiveLevel = 1;
                        break;
-                   case 2:
+                   case MIDDLE:
                        hubActiveLevel = 2;
                        break;
-                   case 3:
-                   case 0:
+                   case RIGHT:
                        hubActiveLevel = 3;
                        break;
                }
@@ -133,13 +132,9 @@ public class WarehouseSideTSEAuto extends LinearOpMode {
                        })
                        .lineToSplineHeading(tsePos)
                        .waitSeconds(1)
-                       .addTemporalMarker(() ->{
-                           capMech.closeGripper();
-                       })
+                       .addTemporalMarker(() -> capMech.closeGripper())
                        .waitSeconds(1)
-                       .addTemporalMarker(() ->{
-                           capMech.retract();
-                       })
+                       .addTemporalMarker(() -> capMech.retract())
                        .build();
 
                // Deposit trajectory
@@ -150,9 +145,7 @@ public class WarehouseSideTSEAuto extends LinearOpMode {
                // Park trajectory
                park = drive.trajectorySequenceBuilder(depositPreLoad.end())
                        .lineToSplineHeading(new Pose2d(0, -wallDistance*side, Math.toRadians(0*side)))
-                       .addTemporalMarker(0.5, () -> {
-                           fourBar.retract();
-                       })
+                       .addTemporalMarker(0.5, () -> fourBar.retract())
                        .lineToSplineHeading(new Pose2d(36, -wallDistance*side, Math.toRadians(0*side))) // Go into warehouse
                        .lineTo(new Vector2d(36,(-(originToWall-34))*side))
                        .forward(18)

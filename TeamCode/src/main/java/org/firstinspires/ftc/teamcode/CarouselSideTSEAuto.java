@@ -18,12 +18,13 @@ import org.firstinspires.ftc.teamcode.hardware.FourBar;
 import org.firstinspires.ftc.teamcode.hardware.Intake;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.util.AutoToTele;
+import org.firstinspires.ftc.teamcode.vision.SkystoneStyleThreshold;
 
 @Autonomous
 public class CarouselSideTSEAuto extends LinearOpMode {
     // Pre-init
     Camera webcam  = new Camera();
-    EocvBarcodePipeline pipeline = new EocvBarcodePipeline();
+    SkystoneStyleThreshold pipeline = new SkystoneStyleThreshold();
     SampleMecanumDrive drive;
     FourBar fourBar = new FourBar();
     Deposit deposit = new Deposit();
@@ -99,15 +100,14 @@ public class CarouselSideTSEAuto extends LinearOpMode {
                middleTsePosition = new Pose2d(-35,-50*side,Math.toRadians(-90*side));
                closeTsePosition = new Pose2d(-27.2,-50*side,Math.toRadians(-90*side));
 
-               switch (pipeline.getBarcodePos()){
-                   case 1:
+               switch (pipeline.getAnalysis()){
+                   case LEFT:
                        hubActiveLevel = 1;
                        break;
-                   case 2:
+                   case MIDDLE:
                        hubActiveLevel = 2;
                        break;
-                   case 3:
-                   case 0:
+                   case RIGHT:
                        hubActiveLevel = 3;
                        break;
                }

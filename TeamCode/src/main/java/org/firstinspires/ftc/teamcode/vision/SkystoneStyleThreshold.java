@@ -1,3 +1,5 @@
+// Based on OpenFTC's SkystoneDeterminationExample code
+
 package org.firstinspires.ftc.teamcode.vision;
 
 import org.opencv.core.Core;
@@ -14,7 +16,7 @@ public class SkystoneStyleThreshold extends OpenCvPipeline {
     public enum TSEPosition
     {
         LEFT,
-        CENTER,
+        MIDDLE,
         RIGHT
     }
 
@@ -137,7 +139,7 @@ public class SkystoneStyleThreshold extends OpenCvPipeline {
         }
         else if(max == avg2) // Was it from region 2?
         {
-            position = TSEPosition.CENTER; // Record our analysis
+            position = TSEPosition.MIDDLE; // Record our analysis
             Imgproc.rectangle(input,region2_pointA,region2_pointB,GREEN,2);
         }
         else if(max == avg3) // Was it from region 3?
