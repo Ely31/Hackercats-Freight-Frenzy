@@ -162,7 +162,6 @@ public class WarehouseSideTSEAuto extends LinearOpMode {
         // Pre-run
     
         if (opModeIsActive()) {
-            FtcDashboard.getInstance().stopCameraStream();
             // Autonomous instructions
             drive.followTrajectorySequence(pickUpTSE);
             fourBar.runToLevel(hubActiveLevel); // Extend 4b before driving
