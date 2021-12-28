@@ -13,7 +13,6 @@ import org.firstinspires.ftc.teamcode.hardware.Camera;
 import org.firstinspires.ftc.teamcode.hardware.CapMech;
 import org.firstinspires.ftc.teamcode.hardware.CarouselSpinner;
 import org.firstinspires.ftc.teamcode.hardware.Deposit;
-import org.firstinspires.ftc.teamcode.vision.EocvBarcodePipeline;
 import org.firstinspires.ftc.teamcode.hardware.FourBar;
 import org.firstinspires.ftc.teamcode.hardware.Intake;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
@@ -132,7 +131,7 @@ public class CarouselTSEAuto extends LinearOpMode {
                pickUpTSE = drive.trajectorySequenceBuilder(startPos)
                        .addTemporalMarker(() ->{
                            capMech.openGripper();
-                           capMech.levelBase();
+                           capMech.extend();
                        })
                        .lineToSplineHeading(tsePos)
                        .waitSeconds(1)

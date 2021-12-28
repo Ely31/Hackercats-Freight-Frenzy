@@ -32,7 +32,7 @@ public class CapMech {
     public void retractBase(){
         basePivot.setPosition(BASE_PIVOT_RETRACTED_POSITION);
     }
-    public void levelBase(){
+    public void extend(){
         basePivot.setPosition(BASE_PIVOT_LEVEL_POSITION);
     }
 

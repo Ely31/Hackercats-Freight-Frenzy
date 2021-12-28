@@ -128,7 +128,7 @@ public class WarehouseTSEAuto extends LinearOpMode {
                pickUpTSE = drive.trajectorySequenceBuilder(startPos)
                        .addTemporalMarker(() ->{
                            capMech.openGripper();
-                           capMech.levelBase();
+                           capMech.extend();
                        })
                        .lineToSplineHeading(tsePos)
                        .waitSeconds(1)

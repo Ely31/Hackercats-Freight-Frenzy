@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.teamcode.hardware.Intake;
 import org.firstinspires.ftc.teamcode.hardware.TeleopDrive;
 import org.firstinspires.ftc.teamcode.util.TruePress;
 
+@Config
 @TeleOp
 public class TurretTeleop extends LinearOpMode {
     // Pre-init
@@ -37,6 +39,8 @@ public class TurretTeleop extends LinearOpMode {
 
     boolean capMechState = false; // True means extended, false means retracted
 
+    public static boolean debug = false;
+
     @Override
     public void runOpMode() {
         // Init
@@ -58,7 +62,7 @@ public class TurretTeleop extends LinearOpMode {
         while (opModeIsActive()) { // TeleOp loop
             // Mecdrive control
             drive.drive(gamepad1.left_stick_x,gamepad1.left_stick_y,gamepad1.right_stick_x,gamepad1.right_trigger);
-            if (gamepad1.back) drive.resetHeading(); // Reset imu (and therefore fieldcentric)
+            if (gamepad1.back) drive.resetHeading(); // Reset fieldcentric
 
             // Intake control
             if (gamepad1.b) intake.reverse();
@@ -89,8 +93,8 @@ public class TurretTeleop extends LinearOpMode {
                 case EXTENDED:
                     // Run the 4b and turret to their desired positions
                     armSystem.setArmPosition(armSystem.levelToAngle(armSystem.activeLevel), armSystem.turretTargetAngle);
-                    if (gamepad2.left_bumper) armSystem.turretTargetAngle -= 1; // Change turret angle with bumpers
-                    if (gamepad2.right_bumper) armSystem.turretTargetAngle += 1;// Change turret angle with bumpers
+                    if (gamepad2.left_bumper) armSystem.turretTargetAngle -= 2; // Change turret angle with bumpers
+                    if (gamepad2.right_bumper) armSystem.turretTargetAngle += 2;// Change turret angle with bumpers
                     if (fourbarToggleInput.trueInput(gamepad2.a)) {
                         fourBarState = FourBarState.RETRACTED;
                     }
@@ -106,13 +110,21 @@ public class TurretTeleop extends LinearOpMode {
 
             // Cap mech control
             // Toggle retracted/extended state of the cap mech
-            if (capMechToggleInput.trueInput(gamepad2.left_bumper)) capMechState = !capMechState;
+            if (capMechToggleInput.trueInput(gamepad2.dpad_left)) capMechState = !capMechState;
 
-            if (capMechState) capMech.levelBase();
+            if (capMechState) capMech.extend();
             else capMech.retract();
 
             if (capMechState && gamepad2.right_bumper) capMech.openGripper();
             else capMech.closeGripper();
+
+            if (debug) { // Send data to telemetry for debug purposes if we want to
+                telemetry.addData("4b state", fourBarState);
+                telemetry.addData("4b pos", armSystem.FourbarAngle());
+                telemetry.addData("turretpos", armSystem.TurretAngle());
+                telemetry.addData("turret target", armSystem.turretTargetAngle);
+                telemetry.update();
+            }
         }
     }
 }

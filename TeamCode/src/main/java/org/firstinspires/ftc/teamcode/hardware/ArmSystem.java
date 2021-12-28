@@ -28,7 +28,7 @@ public class ArmSystem {
     private final double TURRET_SAFE_TO_RETRACT_FOURBAR_RANGE = 2;
 
     private final double FOURBAR_MAX_SPEED = 0.5; // The speed the 4b will always run at while doing any movement
-    private final double TURRET_MAX_SPEED = 0.3; // Max speed of the turret
+    private final double TURRET_MAX_SPEED = 0.5; // Max speed of the turret
 
     // Positions of the 4b, in degrees from zero, of the 3 levels we want it to run to
     public double level1 = 25;
@@ -36,7 +36,7 @@ public class ArmSystem {
     public double level3 = 90;
 
     public int activeLevel; // The level the 4b will run to when told to raise, and the level whose offset is edited
-    public int turretTargetAngle;
+    public double turretTargetAngle;
 
     public void init(HardwareMap hwmap){ //
         fourBar = hwmap.get(DcMotor.class,"fourbar");
@@ -78,15 +78,12 @@ public class ArmSystem {
 
     public void turretRunToAngle(double angle){
         // Check if the fourbar is high enough and that the input angle is within the safe limit before moving
+        turretTargetAngle = utility.clipValue(TURRET_SAFERANGE_MIN, TURRET_SAFERANGE_MAX, turretTargetAngle);
         if (TurretSafeToMove()) {
-            turret.setTargetPosition((int) (utility.clipValue(TURRET_SAFERANGE_MIN, TURRET_SAFERANGE_MAX, angle) * TURRET_TICKS_PER_DEGREE));
+            turret.setTargetPosition ((int) ((int) (utility.clipValue(TURRET_SAFERANGE_MIN, TURRET_SAFERANGE_MAX, angle)) * TURRET_TICKS_PER_DEGREE));
             turret.setPower(TURRET_MAX_SPEED);
             turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
-    }
-
-    public void retractFourbar(){
-        fourbarRunToAngle(0);
     }
 
     public void runToLevel(int level){ // Run to a level specified by an integer

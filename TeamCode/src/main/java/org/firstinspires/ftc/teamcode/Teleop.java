@@ -105,7 +105,7 @@ public class Teleop extends LinearOpMode {
             // Toggle retracted/extended state of the cap mech
             if (capMechToggleInput.trueInput(gamepad2.left_bumper)) capMechState = !capMechState;
 
-            if (capMechState) capMech.levelBase();
+            if (capMechState) capMech.extend();
             else capMech.retract();
 
             if (capMechState && gamepad2.right_bumper) capMech.openGripper();
