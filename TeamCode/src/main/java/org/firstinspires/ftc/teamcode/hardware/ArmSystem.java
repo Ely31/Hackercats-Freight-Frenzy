@@ -3,10 +3,13 @@ package org.firstinspires.ftc.teamcode.hardware;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.util.Utility;
+
 public class ArmSystem {
 
     private DcMotor fourBar;
     private DcMotor turret;
+    Utility utility = new Utility();
 
     private final double FOURBAR_TICKS_PER_REV = 1425.1 * 2; // *2 because of the external gear ratio
     private final double FOURBAR_TICKS_PER_DEGREE = FOURBAR_TICKS_PER_REV /360.0;
@@ -68,23 +71,15 @@ public class ArmSystem {
 
     public void fourbarRunToAngle(double angle){// Converts angle input to ticks and runs the motor there after checking if it's safe
         updateFourBarMin();
-        if ((angle > fourBarSafeRangeMin && angle < FOURBAR_SAFERANGE_MAX)) {
-            fourBar.setTargetPosition((int) (angle* FOURBAR_TICKS_PER_DEGREE));
-        }
-            // Checks if the angle is in a safe range before running there
-            // We don't want to make a mistake in the code and break the 4b because of it (or driver error)
-        else if (angle < fourBarSafeRangeMin) fourBar.setTargetPosition((int)(fourBarSafeRangeMin * FOURBAR_TICKS_PER_DEGREE));
-            // If the input angle is below the safe range, run the 4b to the minimum of the range
-        else if (angle > FOURBAR_SAFERANGE_MAX) fourBar.setTargetPosition((int)(FOURBAR_SAFERANGE_MAX * FOURBAR_TICKS_PER_DEGREE));
-        // If the input angle is above the safe range, run the 4b to the to maximum of the range
+        fourBar.setTargetPosition((int) (utility.clipValue(fourBarSafeRangeMin,FOURBAR_SAFERANGE_MAX, angle) * FOURBAR_TICKS_PER_DEGREE));
         fourBar.setPower(FOURBAR_MAX_SPEED);
         fourBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
-    public void turretRunToAngle(double degrees){
+    public void turretRunToAngle(double angle){
         // Check if the fourbar is high enough and that the input angle is within the safe limit before moving
-        if (TurretSafeToMove() && (degrees > TURRET_SAFERANGE_MIN && degrees < TURRET_SAFERANGE_MAX)) {
-            turret.setTargetPosition((int) (degrees * TURRET_TICKS_PER_DEGREE));
+        if (TurretSafeToMove()) {
+            turret.setTargetPosition((int) (utility.clipValue(TURRET_SAFERANGE_MIN, TURRET_SAFERANGE_MAX, angle) * TURRET_TICKS_PER_DEGREE));
             turret.setPower(TURRET_MAX_SPEED);
             turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }

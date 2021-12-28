@@ -89,8 +89,8 @@ public class TurretTeleop extends LinearOpMode {
                 case EXTENDED:
                     // Run the 4b and turret to their desired positions
                     armSystem.setArmPosition(armSystem.levelToAngle(armSystem.activeLevel), armSystem.turretTargetAngle);
-                    if (gamepad2.left_bumper) armSystem.turretTargetAngle =- 1; // Change turret angle with bumpers
-                    if (gamepad2.right_bumper) armSystem.turretTargetAngle =+ 1;// Change turret angle with bumpers
+                    if (gamepad2.left_bumper) armSystem.turretTargetAngle -= 1; // Change turret angle with bumpers
+                    if (gamepad2.right_bumper) armSystem.turretTargetAngle += 1;// Change turret angle with bumpers
                     if (fourbarToggleInput.trueInput(gamepad2.a)) {
                         fourBarState = FourBarState.RETRACTED;
                     }
