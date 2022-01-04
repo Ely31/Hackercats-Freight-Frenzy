@@ -131,7 +131,7 @@ public class CarouselTSEAuto extends LinearOpMode {
                pickUpTSE = drive.trajectorySequenceBuilder(startPos)
                        .addTemporalMarker(() ->{
                            capMech.openGripper();
-                           capMech.extend();
+                           capMech.levelArm();
                        })
                        .lineToSplineHeading(tsePos)
                        .waitSeconds(1)

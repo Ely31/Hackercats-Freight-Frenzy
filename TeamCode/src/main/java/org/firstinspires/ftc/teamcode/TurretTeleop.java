@@ -86,7 +86,9 @@ public class TurretTeleop extends LinearOpMode {
                 case RETRACTED:
                     armSystem.setArmPosition(0,0); // Retract arm
                     armSystem.turretTargetAngle = 0; // Reset turret angle so that when the arm is first extended the turret doesn't move
-                    if (fourbarToggleInput.trueInput(gamepad2.a)) {
+                    capMech.retract(); // Make sure the capmech is retracted when the 4b is
+
+                    if (fourbarToggleInput.trueInput(gamepad2.a)) { // Use A to switch states
                     fourBarState = FourBarState.EXTENDED;
                     }
                     break;
@@ -95,7 +97,15 @@ public class TurretTeleop extends LinearOpMode {
                     armSystem.setArmPosition(armSystem.levelToAngle(armSystem.activeLevel), armSystem.turretTargetAngle);
                     if (gamepad2.left_bumper) armSystem.turretTargetAngle -= 2; // Change turret angle with bumpers
                     if (gamepad2.right_bumper) armSystem.turretTargetAngle += 2;// Change turret angle with bumpers
-                    if (fourbarToggleInput.trueInput(gamepad2.a)) {
+
+                    // Cap mech control
+                    if (capMechToggleInput.trueInput(gamepad2.dpad_left)) capMechState = !capMechState;
+                    if (capMechState) capMech.levelArm();
+                    else capMech.retract();
+                    if (capMechState && gamepad2.right_bumper) capMech.openGripper();
+                    else capMech.closeGripper();
+
+                    if (fourbarToggleInput.trueInput(gamepad2.a)) { // Use A to switch states
                         fourBarState = FourBarState.RETRACTED;
                     }
                     break;
@@ -108,21 +118,12 @@ public class TurretTeleop extends LinearOpMode {
 
             if (gamepad2.back) intake.dropIntake(); // In case this doesn't happen in auto for some reason
 
-            // Cap mech control
-            // Toggle retracted/extended state of the cap mech
-            if (capMechToggleInput.trueInput(gamepad2.dpad_left)) capMechState = !capMechState;
-
-            if (capMechState) capMech.extend();
-            else capMech.retract();
-
-            if (capMechState && gamepad2.right_bumper) capMech.openGripper();
-            else capMech.closeGripper();
-
             if (debug) { // Send data to telemetry for debug purposes if we want to
                 telemetry.addData("4b state", fourBarState);
                 telemetry.addData("4b pos", armSystem.FourbarAngle());
                 telemetry.addData("turretpos", armSystem.TurretAngle());
                 telemetry.addData("turret target", armSystem.turretTargetAngle);
+                telemetry.addData("heading", -drive.heading);
                 telemetry.update();
             }
         }
