@@ -121,6 +121,7 @@ public class TurretTeleop extends LinearOpMode {
             if (debug) { // Send data to telemetry for debug purposes if we want to
                 telemetry.addData("4b state", fourBarState);
                 telemetry.addData("4b pos", armSystem.FourbarAngle());
+                telemetry.addData("target level", armSystem.activeLevel);
                 telemetry.addData("turretpos", armSystem.TurretAngle());
                 telemetry.addData("turret target", armSystem.turretTargetAngle);
                 telemetry.addData("heading", -drive.heading);

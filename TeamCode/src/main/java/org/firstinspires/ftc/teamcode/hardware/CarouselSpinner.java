@@ -15,7 +15,6 @@ public class CarouselSpinner {
 
     public void init(HardwareMap hwmap){
         carousel = hwmap.get(DcMotor.class,"carousel");
-        carousel.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     public void spinRotations(double rotations,double speed){ // Set the target pos to a number of rotations from the current pos

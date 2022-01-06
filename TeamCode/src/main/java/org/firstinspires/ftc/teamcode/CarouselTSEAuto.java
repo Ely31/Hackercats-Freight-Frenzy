@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
@@ -19,6 +20,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.util.AutoToTele;
 import org.firstinspires.ftc.teamcode.vision.SkystoneStyleThreshold;
 
+@Config
 @Autonomous
 public class CarouselTSEAuto extends LinearOpMode {
     // Pre-init
@@ -36,8 +38,8 @@ public class CarouselTSEAuto extends LinearOpMode {
     int side; // Red alliance is 1, blue is -1
 
     final double originToWall = 141.0/2.0; // I guess the field is actually 141 inches wide
-    final double carouselXCoordinate = -55;
-    final double carouselYCoordinate = -58;
+    public static double carouselXCoordinate = -56;
+    public static double carouselYCoordinate = -58;
 
     // Realative to warehouse
     private Pose2d farTsePosition;
@@ -146,13 +148,13 @@ public class CarouselTSEAuto extends LinearOpMode {
 
                carouselAndPark = drive.trajectorySequenceBuilder(depositPreLoad.end())
                        .addTemporalMarker(0.5, () -> fourBar.retract())
-                       .lineToSplineHeading(new Pose2d(carouselXCoordinate, carouselYCoordinate*side, Math.toRadians(0*side))) // Go to carousel
+                       .lineToSplineHeading(new Pose2d(carouselXCoordinate, carouselYCoordinate*side, Math.toRadians(210*side))) // Go to carousel
                        .addTemporalMarker(() -> {
                            carouselMech.deliver(side); // Spin carousel
                                })
                        .waitSeconds(3.5)
-                       .lineTo(new Vector2d(carouselXCoordinate+7,carouselYCoordinate*side)) // Back off carousel
-                       .lineToSplineHeading(new Pose2d(-62,-33*side,Math.toRadians(0*side))) // Park
+                       // .lineTo(new Vector2d(carouselXCoordinate+7,carouselYCoordinate*side)) // Back off carousel
+                       .lineToSplineHeading(new Pose2d(-62,-34*side,Math.toRadians(0*side))) // Park
                        .build();
 
                pipelineThrottle.reset(); // Reset the throttle timer so the whole thing loops
