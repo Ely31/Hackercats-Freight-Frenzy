@@ -97,9 +97,9 @@ public class CarouselTSEAuto extends LinearOpMode {
                startPos = new Pose2d(-35,(-(originToWall-9))*side, Math.toRadians(-90*side));
                drive.setPoseEstimate(startPos);
 
-               farTsePosition = new Pose2d(-43.4,-50*side,Math.toRadians(-90*side));
-               middleTsePosition = new Pose2d(-35,-50*side,Math.toRadians(-90*side));
-               closeTsePosition = new Pose2d(-27.2,-50*side,Math.toRadians(-90*side));
+               farTsePosition = new Pose2d(-44.6,-49*side,Math.toRadians(-90*side));
+               middleTsePosition = new Pose2d(-35,-49*side,Math.toRadians(-90*side));
+               closeTsePosition = new Pose2d(-25.7,-49*side,Math.toRadians(-90*side));
 
                switch (pipeline.getAnalysis()){
                    case LEFT:
@@ -115,30 +115,28 @@ public class CarouselTSEAuto extends LinearOpMode {
 
                switch (hubActiveLevel) {
                    case 1:
-                       depositPos = new Pose2d(-16.60, -43*side, Math.toRadians(250*side));
+                       depositPos = new Pose2d(-18, -43*side, Math.toRadians(245*side));
                        if (side == 1) tsePos = farTsePosition; // Switch close and far positions on blue alliance
                        else tsePos = closeTsePosition;
                        break;
                    case 2:
-                       depositPos = new Pose2d(-16.6, -44*side, Math.toRadians(250*side));
+                       depositPos = new Pose2d(-18, -44*side, Math.toRadians(245*side));
                        tsePos = middleTsePosition;
                        break;
                    case 3:
-                       depositPos = new Pose2d(-16.6, -43*side, Math.toRadians(250*side));
+                       depositPos = new Pose2d(-18, -43*side, Math.toRadians(245*side));
                        if (side == 1) tsePos = closeTsePosition;  // Switch close and far positions on blue alliance
                        else tsePos = farTsePosition;
                        break;
                }
 
                pickUpTSE = drive.trajectorySequenceBuilder(startPos)
-                       .addTemporalMarker(() ->{
-                           capMech.openGripper();
-                           capMech.levelArm();
-                       })
+                       .addTemporalMarker(() -> capMech.openGripper())
                        .lineToSplineHeading(tsePos)
+                       .addTemporalMarker(() -> capMech.levelArm())
                        .waitSeconds(1)
                        .addTemporalMarker(() -> capMech.closeGripper())
-                       .waitSeconds(1)
+                       .waitSeconds(0.5)
                        .addTemporalMarker(() -> capMech.retract())
                        .build();
 
@@ -153,8 +151,7 @@ public class CarouselTSEAuto extends LinearOpMode {
                            carouselMech.deliver(side); // Spin carousel
                                })
                        .waitSeconds(3.5)
-                       // .lineTo(new Vector2d(carouselXCoordinate+7,carouselYCoordinate*side)) // Back off carousel
-                       .lineToSplineHeading(new Pose2d(-62,-34*side,Math.toRadians(0*side))) // Park
+                       .lineToSplineHeading(new Pose2d(-59,-34*side,Math.toRadians(0*side))) // Park
                        .build();
 
                pipelineThrottle.reset(); // Reset the throttle timer so the whole thing loops

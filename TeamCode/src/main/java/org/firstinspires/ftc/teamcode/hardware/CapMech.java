@@ -13,7 +13,7 @@ public class CapMech {
     public static double GRIPPER_OPEN_POSITION = 0.6;
 
     public static double BASE_PIVOT_RETRACTED_POSITION = 0;
-    public static double BASE_PIVOT_LEVEL_POSITION = 0.65;
+    public static double BASE_PIVOT_LEVEL_POSITION = 0.8;
 
     public void init(HardwareMap hwmap){
         gripper = hwmap.get(Servo.class, "capGripper");

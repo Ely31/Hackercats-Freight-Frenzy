@@ -11,7 +11,7 @@ public class ArmSystem {
     private DcMotor turret;
     Utility utility = new Utility();
 
-    private final double FOURBAR_TICKS_PER_REV = 1425.1 * 2; // *2 because of the external gear ratio
+    private final double FOURBAR_TICKS_PER_REV = 1425.1 * 1.5625; // *1.56 because of the external gear ratio
     private final double FOURBAR_TICKS_PER_DEGREE = FOURBAR_TICKS_PER_REV /360.0;
 
     private final double TURRET_TICKS_PER_REV = 384.5 * 5.3636; // *5.36 because of gear redection
@@ -19,8 +19,8 @@ public class ArmSystem {
 
     // Define the safe range of the 4b
     private double fourBarSafeRangeMin = 0; // This will be increased if the turret is rotated
-    private final double FOURBAR_SAFERANGE_MAX = 110;
-    private final double FOURBAR_SAFE_TO_SPIN_TURRET_ANGLE = 20;
+    private final double FOURBAR_SAFERANGE_MAX = 120;
+    private final double FOURBAR_SAFE_TO_SPIN_TURRET_ANGLE = 25;
 
     // Define the safe range for the turret
     private final double TURRET_SAFERANGE_MIN = -90;
@@ -31,7 +31,7 @@ public class ArmSystem {
     private final double TURRET_MAX_SPEED = 0.5; // Max speed of the turret
 
     // Positions of the 4b, in degrees from zero, of the 3 levels we want it to run to
-    public double level1 = 25;
+    public double level1 = 27;
     public double level2 = 53;
     public double level3 = 90;
 

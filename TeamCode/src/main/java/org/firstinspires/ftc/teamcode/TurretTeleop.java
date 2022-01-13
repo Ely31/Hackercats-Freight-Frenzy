@@ -66,6 +66,7 @@ public class TurretTeleop extends LinearOpMode {
 
             // Intake control
             if (gamepad1.b) intake.reverse();
+            else if (fourBarState == FourBarState.EXTENDED) intake.off();
             else intake.toggle(gamepad1.a);
 
             // Deposit control
@@ -95,21 +96,21 @@ public class TurretTeleop extends LinearOpMode {
                 case EXTENDED:
                     // Run the 4b and turret to their desired positions
                     armSystem.setArmPosition(armSystem.levelToAngle(armSystem.activeLevel), armSystem.turretTargetAngle);
-                    if (gamepad2.left_bumper) armSystem.turretTargetAngle -= 2; // Change turret angle with bumpers
-                    if (gamepad2.right_bumper) armSystem.turretTargetAngle += 2;// Change turret angle with bumpers
-
-                    // Cap mech control
-                    if (capMechToggleInput.trueInput(gamepad2.dpad_left)) capMechState = !capMechState;
-                    if (capMechState) capMech.levelArm();
-                    else capMech.retract();
-                    if (capMechState && gamepad2.right_bumper) capMech.openGripper();
-                    else capMech.closeGripper();
+                    if (gamepad2.left_bumper) armSystem.turretTargetAngle += 2; // Change turret angle with bumpers
+                    if (gamepad2.right_bumper) armSystem.turretTargetAngle -= 2;// Change turret angle with bumpers
 
                     if (fourbarToggleInput.trueInput(gamepad2.a)) { // Use A to switch states
                         fourBarState = FourBarState.RETRACTED;
                     }
                     break;
             }
+
+            // Cap mech control
+            if (capMechToggleInput.trueInput(gamepad2.dpad_left)) capMechState = !capMechState;
+            if (capMechState) capMech.levelArm();
+            else if (capMechState == false)capMech.retract();
+            if (capMechState && gamepad2.dpad_right) capMech.openGripper();
+            else capMech.closeGripper();
 
             // Carousel mech control
             carouselSpinner.setSpeed(gamepad2.left_trigger- gamepad2.right_trigger);
