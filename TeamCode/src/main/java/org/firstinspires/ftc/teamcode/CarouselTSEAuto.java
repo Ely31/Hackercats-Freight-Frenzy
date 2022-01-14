@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.hardware.ArmSystem;
 import org.firstinspires.ftc.teamcode.hardware.Camera;
 import org.firstinspires.ftc.teamcode.hardware.CapMech;
 import org.firstinspires.ftc.teamcode.hardware.CarouselSpinner;
@@ -27,7 +28,7 @@ public class CarouselTSEAuto extends LinearOpMode {
     Camera webcam  = new Camera();
     SkystoneStyleThreshold pipeline = new SkystoneStyleThreshold();
     SampleMecanumDrive drive;
-    FourBar fourBar = new FourBar();
+    ArmSystem armSystem = new ArmSystem();
     Deposit deposit = new Deposit();
     Intake intake = new Intake();
     CarouselSpinner carouselMech = new CarouselSpinner();
@@ -38,8 +39,8 @@ public class CarouselTSEAuto extends LinearOpMode {
     int side; // Red alliance is 1, blue is -1
 
     final double originToWall = 141.0/2.0; // I guess the field is actually 141 inches wide
-    public static double carouselXCoordinate = -56;
-    public static double carouselYCoordinate = -58;
+    final double carouselXCoordinate = -56;
+    final double carouselYCoordinate = -58;
 
     // Realative to warehouse
     private Pose2d farTsePosition;
@@ -60,11 +61,13 @@ public class CarouselTSEAuto extends LinearOpMode {
         webcam.webcam.setPipeline(pipeline);
         drive = new SampleMecanumDrive(hardwareMap);
         drive.setPoseEstimate(startPos);
-        fourBar.init(hardwareMap);
+        armSystem.init(hardwareMap);
         deposit.init(hardwareMap);
         intake.init(hardwareMap);
         carouselMech.init(hardwareMap);
         capMech.init(hardwareMap);
+
+        armSystem.turretRunToAngle(0);
 
         ElapsedTime depositTimer = new ElapsedTime();
         ElapsedTime pipelineThrottle = new ElapsedTime();
@@ -115,16 +118,16 @@ public class CarouselTSEAuto extends LinearOpMode {
 
                switch (hubActiveLevel) {
                    case 1:
-                       depositPos = new Pose2d(-18, -43*side, Math.toRadians(245*side));
+                       depositPos = new Pose2d(-24, -43*side, Math.toRadians(245*side));
                        if (side == 1) tsePos = farTsePosition; // Switch close and far positions on blue alliance
                        else tsePos = closeTsePosition;
                        break;
                    case 2:
-                       depositPos = new Pose2d(-18, -44*side, Math.toRadians(245*side));
+                       depositPos = new Pose2d(-24, -44*side, Math.toRadians(245*side));
                        tsePos = middleTsePosition;
                        break;
                    case 3:
-                       depositPos = new Pose2d(-18, -43*side, Math.toRadians(245*side));
+                       depositPos = new Pose2d(-24, -43*side, Math.toRadians(245*side));
                        if (side == 1) tsePos = closeTsePosition;  // Switch close and far positions on blue alliance
                        else tsePos = farTsePosition;
                        break;
@@ -145,7 +148,7 @@ public class CarouselTSEAuto extends LinearOpMode {
                        .build();
 
                carouselAndPark = drive.trajectorySequenceBuilder(depositPreLoad.end())
-                       .addTemporalMarker(0.5, () -> fourBar.retract())
+                       .addTemporalMarker(0.5, () -> armSystem.setArmPosition(0,0))
                        .lineToSplineHeading(new Pose2d(carouselXCoordinate, carouselYCoordinate*side, Math.toRadians(210*side))) // Go to carousel
                        .addTemporalMarker(() -> {
                            carouselMech.deliver(side); // Spin carousel
@@ -164,7 +167,7 @@ public class CarouselTSEAuto extends LinearOpMode {
         if (opModeIsActive()) {
             // Autonomous instructions
             drive.followTrajectorySequence(pickUpTSE);
-            fourBar.runToLevel(hubActiveLevel); // Extend 4b before driving
+            armSystem.runToLevel(hubActiveLevel); // Extend 4b before driving
             drive.followTrajectory(depositPreLoad); // Drive to spot where we'll deposit from
             depositTimer.reset();
             deposit.dump(depositTimer); // Dump

@@ -8,7 +8,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.checkerframework.checker.units.qual.A;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.hardware.ArmSystem;
 import org.firstinspires.ftc.teamcode.hardware.Camera;
 import org.firstinspires.ftc.teamcode.hardware.CarouselSpinner;
 import org.firstinspires.ftc.teamcode.hardware.Deposit;
@@ -24,7 +26,7 @@ public class CarouselAuto extends LinearOpMode {
     Camera webcam  = new Camera();
     EocvBarcodePipeline pipeline = new EocvBarcodePipeline();
     SampleMecanumDrive drive;
-    FourBar fourBar = new FourBar();
+    ArmSystem armSystem = new ArmSystem();
     Deposit deposit = new Deposit();
     Intake intake = new Intake();
     CarouselSpinner carouselMech = new CarouselSpinner();
@@ -32,8 +34,7 @@ public class CarouselAuto extends LinearOpMode {
     int hubActiveLevel = 0;
 
     final double originToWall = 141.0/2.0; // I guess the field is actually 141 inches wide
-    final double wallDistance = originToWall - 6.5; // Center of bot is 6.5in from wall
-    final double carouselXCoordinate = -55;
+    final double carouselXCoordinate = -56;
     final double carouselYCoordinate = -58;
 
     Pose2d startPos = new Pose2d(11.4,-(originToWall-9), Math.toRadians(-90));
@@ -51,10 +52,12 @@ public class CarouselAuto extends LinearOpMode {
         webcam.webcam.setPipeline(pipeline);
         drive = new SampleMecanumDrive(hardwareMap);
         drive.setPoseEstimate(startPos);
-        fourBar.init(hardwareMap);
+        armSystem.init(hardwareMap);
         deposit.init(hardwareMap);
         intake.init(hardwareMap);
         carouselMech.init(hardwareMap);
+
+        armSystem.turretRunToAngle(0);
 
         ElapsedTime depositTimer = new ElapsedTime();
         ElapsedTime pipelineThrottle = new ElapsedTime();
@@ -119,15 +122,14 @@ public class CarouselAuto extends LinearOpMode {
                carouselAndPark = drive.trajectorySequenceBuilder(depositPreLoad.end())
                        // .lineToSplineHeading(new Pose2d(0, -wallDistance*side, Math.toRadians(0*side)))
                        .addTemporalMarker(0.5, () -> {
-                           fourBar.retract();
+                           armSystem.setArmPosition(0,0);
                        })
-                       .lineToSplineHeading(new Pose2d(carouselXCoordinate, carouselYCoordinate*side, Math.toRadians(0*side))) // Go to carousel
+                       .lineToSplineHeading(new Pose2d(carouselXCoordinate, carouselYCoordinate*side, Math.toRadians(210*side))) // Go to carousel
                        .addTemporalMarker(() -> {
                            carouselMech.deliver(side); // Spin carousel
                                })
-                       .waitSeconds(4)
-                       .lineTo(new Vector2d(carouselXCoordinate+7,carouselYCoordinate*side)) // Back off carousel
-                       .lineToSplineHeading(new Pose2d(-62,-33*side,Math.toRadians(0*side))) // Park
+                       .waitSeconds(3.5)
+                       .lineToSplineHeading(new Pose2d(-59,-34*side,Math.toRadians(0*side))) // Park
                        .build();
 
                pipelineThrottle.reset(); // Reset the throttle timer so the whole thing loops
@@ -139,7 +141,7 @@ public class CarouselAuto extends LinearOpMode {
     
         if (opModeIsActive()) {
             // Autonomous instructions
-            fourBar.runToLevel(hubActiveLevel); // Extend 4b before driving
+            armSystem.runToLevel(hubActiveLevel); // Extend 4b before driving
             drive.followTrajectory(depositPreLoad); // Drive to spot where we'll deposit from
             depositTimer.reset();
             deposit.dump(depositTimer); // Dump

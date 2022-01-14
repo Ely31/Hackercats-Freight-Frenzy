@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.hardware.ArmSystem;
 import org.firstinspires.ftc.teamcode.util.TruePress;
 
+@Disabled
 @TeleOp
 public class TurretTestin extends LinearOpMode {
     // Pre-init

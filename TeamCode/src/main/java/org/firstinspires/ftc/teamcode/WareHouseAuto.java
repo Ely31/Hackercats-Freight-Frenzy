@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.hardware.ArmSystem;
 import org.firstinspires.ftc.teamcode.hardware.Camera;
 import org.firstinspires.ftc.teamcode.hardware.Deposit;
 import org.firstinspires.ftc.teamcode.vision.EocvBarcodePipeline;
@@ -23,7 +24,7 @@ public class WareHouseAuto extends LinearOpMode {
     Camera webcam  = new Camera();
     EocvBarcodePipeline pipeline = new EocvBarcodePipeline();
     SampleMecanumDrive drive;
-    FourBar fourBar = new FourBar();
+    ArmSystem armSystem = new ArmSystem();
     Deposit deposit = new Deposit();
     Intake intake = new Intake();
 
@@ -47,9 +48,11 @@ public class WareHouseAuto extends LinearOpMode {
         webcam.webcam.setPipeline(pipeline);
         drive = new SampleMecanumDrive(hardwareMap);
         drive.setPoseEstimate(startPos);
-        fourBar.init(hardwareMap);
+        armSystem.init(hardwareMap);
         deposit.init(hardwareMap);
         intake.init(hardwareMap);
+
+        armSystem.turretRunToAngle(0);
 
         ElapsedTime depositTimer = new ElapsedTime();
         ElapsedTime pipelineThrottle = new ElapsedTime();
@@ -114,7 +117,7 @@ public class WareHouseAuto extends LinearOpMode {
                park = drive.trajectorySequenceBuilder(depositPreLoad.end())
                        .lineToSplineHeading(new Pose2d(0, -wallDistance*side, Math.toRadians(0*side)))
                        .addTemporalMarker(0.5, () -> {
-                           fourBar.retract();
+                           armSystem.setArmPosition(0,0);
                        })
                        .lineToSplineHeading(new Pose2d(36, -wallDistance*side, Math.toRadians(0*side))) // Go into warehouse
                        .lineTo(new Vector2d(36,(-(originToWall-34))*side))
@@ -132,7 +135,7 @@ public class WareHouseAuto extends LinearOpMode {
     
         if (opModeIsActive()) {
             // Autonomous instructions
-            fourBar.runToLevel(hubActiveLevel); // Extend 4b before driving
+            armSystem.runToLevel(hubActiveLevel); // Extend 4b before driving
             drive.followTrajectory(depositPreLoad); // Drive to spot where we'll deposit from
             depositTimer.reset();
             deposit.dump(depositTimer); // Dump
