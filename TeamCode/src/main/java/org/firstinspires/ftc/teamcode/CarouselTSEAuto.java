@@ -39,7 +39,7 @@ public class CarouselTSEAuto extends LinearOpMode {
     int side; // Red alliance is 1, blue is -1
 
     final double originToWall = 141.0/2.0; // I guess the field is actually 141 inches wide
-    final double carouselXCoordinate = -56;
+    final double carouselXCoordinate = -57.5;
     final double carouselYCoordinate = -58;
 
     // Realative to warehouse
@@ -118,16 +118,16 @@ public class CarouselTSEAuto extends LinearOpMode {
 
                switch (hubActiveLevel) {
                    case 1:
-                       depositPos = new Pose2d(-24, -43*side, Math.toRadians(245*side));
+                       depositPos = new Pose2d(-24, -42*side, Math.toRadians(245*side));
                        if (side == 1) tsePos = farTsePosition; // Switch close and far positions on blue alliance
                        else tsePos = closeTsePosition;
                        break;
                    case 2:
-                       depositPos = new Pose2d(-24, -44*side, Math.toRadians(245*side));
+                       depositPos = new Pose2d(-24, -43*side, Math.toRadians(245*side));
                        tsePos = middleTsePosition;
                        break;
                    case 3:
-                       depositPos = new Pose2d(-24, -43*side, Math.toRadians(245*side));
+                       depositPos = new Pose2d(-24, -42*side, Math.toRadians(245*side));
                        if (side == 1) tsePos = closeTsePosition;  // Switch close and far positions on blue alliance
                        else tsePos = farTsePosition;
                        break;
@@ -149,12 +149,12 @@ public class CarouselTSEAuto extends LinearOpMode {
 
                carouselAndPark = drive.trajectorySequenceBuilder(depositPreLoad.end())
                        .addTemporalMarker(0.5, () -> armSystem.setArmPosition(0,0))
-                       .lineToSplineHeading(new Pose2d(carouselXCoordinate, carouselYCoordinate*side, Math.toRadians(210*side))) // Go to carousel
+                       .lineToSplineHeading(new Pose2d(carouselXCoordinate, carouselYCoordinate*side, Math.toRadians(215*side))) // Go to carousel
                        .addTemporalMarker(() -> {
                            carouselMech.deliver(side); // Spin carousel
                                })
                        .waitSeconds(3.5)
-                       .lineToSplineHeading(new Pose2d(-59,-34*side,Math.toRadians(0*side))) // Park
+                       .lineToSplineHeading(new Pose2d(-60,-34*side,Math.toRadians(0*side))) // Park
                        .build();
 
                pipelineThrottle.reset(); // Reset the throttle timer so the whole thing loops

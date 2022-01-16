@@ -34,14 +34,13 @@ public class CarouselAuto extends LinearOpMode {
     int hubActiveLevel = 0;
 
     final double originToWall = 141.0/2.0; // I guess the field is actually 141 inches wide
-    final double carouselXCoordinate = -56;
+    final double carouselXCoordinate = -57.5;
     final double carouselYCoordinate = -58;
 
     Pose2d startPos = new Pose2d(11.4,-(originToWall-9), Math.toRadians(-90));
     Pose2d depositPos;
     Trajectory depositPreLoad;
     TrajectorySequence carouselAndPark;
-
 
     int side; // Red alliance is 1, blue is -1
 
