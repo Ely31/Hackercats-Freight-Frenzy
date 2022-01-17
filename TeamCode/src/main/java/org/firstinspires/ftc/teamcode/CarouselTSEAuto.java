@@ -134,13 +134,14 @@ public class CarouselTSEAuto extends LinearOpMode {
                }
 
                pickUpTSE = drive.trajectorySequenceBuilder(startPos)
-                       .addTemporalMarker(() -> capMech.openGripper())
-                       .lineToSplineHeading(tsePos)
+                       .addTemporalMarker(() -> capMech.openGripper()) // Open the gripper and lower it before driving to the tse
                        .addTemporalMarker(() -> capMech.levelArm())
+                       .lineToSplineHeading(new Pose2d(tsePos.getX(),-55*side,Math.toRadians(-90*side))) // Drive to the spot where the bot is facing the tse straight on
+                       .lineToSplineHeading(tsePos) // Go to the spot where the tse is in the gripper
                        .waitSeconds(1)
-                       .addTemporalMarker(() -> capMech.closeGripper())
+                       .addTemporalMarker(() -> capMech.closeGripper()) // Grab it
                        .waitSeconds(0.5)
-                       .addTemporalMarker(() -> capMech.retract())
+                       .addTemporalMarker(() -> capMech.retract()) // Pick it up
                        .build();
 
                depositPreLoad = drive.trajectoryBuilder(pickUpTSE.end())

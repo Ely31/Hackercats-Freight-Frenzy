@@ -48,6 +48,7 @@ public class TurretTeleop extends LinearOpMode {
         intake.init(hardwareMap);
         deposit.init(hardwareMap);
         armSystem.init(hardwareMap);
+        armSystem.setArmPosition(0,0);
         carouselSpinner.init(hardwareMap);
         capMech.init(hardwareMap);
 
@@ -107,7 +108,7 @@ public class TurretTeleop extends LinearOpMode {
             // Cap mech control
             if (capMechToggleInput.trueInput(gamepad2.dpad_left)) capMechState = !capMechState;
             if (capMechState) capMech.levelArm();
-            else if (capMechState == false)capMech.retract();
+            else if (!capMechState)capMech.retract();
             if (capMechState && gamepad2.dpad_right) capMech.openGripper();
             else capMech.closeGripper();
 

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -12,8 +13,9 @@ import org.firstinspires.ftc.teamcode.hardware.Intake;
 import org.firstinspires.ftc.teamcode.hardware.TeleopDrive;
 import org.firstinspires.ftc.teamcode.util.TruePress;
 
+@Disabled
 @TeleOp
-public class Teleop extends LinearOpMode {
+public class OldTeleop extends LinearOpMode {
     // Pre-init
 
     TeleopDrive drive = new TeleopDrive();
