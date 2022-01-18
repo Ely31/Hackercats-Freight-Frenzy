@@ -11,7 +11,7 @@ public class Intake {
     private Servo intakeRelease;
 
     double RELEASE_HOLD_POSITION = 0.1;
-    double RELEASE_DROP_POSITION = 0.4;
+    double RELEASE_DROP_POSITION = 0.25;
 
     private boolean lastInput;
     private boolean intakeToggledStatus;
