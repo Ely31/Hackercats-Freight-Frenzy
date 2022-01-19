@@ -41,6 +41,7 @@ public class WarehouseTSEAuto extends LinearOpMode {
     private Pose2d farTsePosition;
     private Pose2d middleTsePosition;
     private Pose2d closeTsePosition;
+    private Pose2d closeTsePosPreMove;
 
     Pose2d startPos = new Pose2d(11.4,-(originToWall-9), Math.toRadians(-90));
     Pose2d depositPos;
@@ -93,9 +94,10 @@ public class WarehouseTSEAuto extends LinearOpMode {
                startPos = new Pose2d(11.4,(-(originToWall-9))*side, Math.toRadians(-90*side));
                drive.setPoseEstimate(startPos); // Set pose estimate to match which side of the field we're on
 
-               farTsePosition = new Pose2d(3.2,-48.2*side,Math.toRadians(-90*side));
-               middleTsePosition = new Pose2d(11.8,-48.2*side,Math.toRadians(-90*side));
-               closeTsePosition = new Pose2d(8,-43*side,Math.toRadians(225*side));
+               farTsePosition = new Pose2d(2.5,-48*side,Math.toRadians(-90*side));
+               middleTsePosition = new Pose2d(11.8,-48*side,Math.toRadians(-90*side));
+               closeTsePosition = new Pose2d(9.5,-44*side,Math.toRadians(225*side));
+               closeTsePosPreMove = new Pose2d(4,-48*side,tsePos.getHeading());
 
                switch (pipeline.getAnalysis()){
                    case LEFT:
@@ -111,34 +113,48 @@ public class WarehouseTSEAuto extends LinearOpMode {
 
                switch (hubActiveLevel) {
                    case 1:
-                       depositPos = new Pose2d(-4, -41*side, Math.toRadians(-70*side));
-                       if (side == 1) tsePos = farTsePosition; // Switch close and far positions on blue alliance
-                       else tsePos = closeTsePosition;
+                       depositPos = new Pose2d(-2, -41*side, Math.toRadians(-70*side));
+                       if (side == 1){ // Switch close and far positions on blue alliance
+                           tsePos = farTsePosition;
+                           pickUpTSE = drive.trajectorySequenceBuilder(startPos)
+                                   .lineToSplineHeading(new Pose2d(tsePos.getX(),-55*side,tsePos.getHeading())) // Pre move
+                                   .lineToSplineHeading(tsePos)
+                                   .build();
+                       }
+                       else {
+                           tsePos = closeTsePosition;
+                           pickUpTSE = drive.trajectorySequenceBuilder(startPos)
+                                   .lineToSplineHeading(closeTsePosPreMove) // Pre move
+                                   .lineToSplineHeading(tsePos)
+                                   .build();
+                       }
                        break;
                    case 2:
-                       depositPos = new Pose2d(-4, -42*side, Math.toRadians(-70*side));
+                       depositPos = new Pose2d(-2, -42*side, Math.toRadians(-70*side));
                        tsePos = middleTsePosition;
+                       pickUpTSE = drive.trajectorySequenceBuilder(startPos)
+                               .lineToSplineHeading(new Pose2d(tsePos.getX(),-55*side,tsePos.getHeading())) // Pre move
+                               .lineToSplineHeading(tsePos)
+                               .build();
                        break;
                    case 3:
-                       depositPos = new Pose2d(-4, -40*side, Math.toRadians(-70*side));
-                       if (side == 1) tsePos = closeTsePosition;  // Switch close and far positions on blue alliance
-                       else tsePos = farTsePosition;
+                       depositPos = new Pose2d(-2, -42*side, Math.toRadians(-70*side));
+                       if (side == 1){  // Switch close and far positions on blue alliance
+                           tsePos = closeTsePosition;
+                           pickUpTSE = drive.trajectorySequenceBuilder(startPos)
+                                   .lineToSplineHeading(closeTsePosPreMove) // Pre move
+                                   .lineToSplineHeading(tsePos)
+                                   .build();
+                       }
+                       else {
+                           tsePos = farTsePosition;
+                           pickUpTSE = drive.trajectorySequenceBuilder(startPos)
+                                   .lineToSplineHeading(new Pose2d(tsePos.getX(),-55*side,tsePos.getHeading())) // Pre move
+                                   .lineToSplineHeading(tsePos)
+                                   .build();
+                       }
                        break;
                }
-
-               // Tse pick up trajectory
-               pickUpTSE = drive.trajectorySequenceBuilder(startPos)
-                       .addTemporalMarker(() ->{
-                           capMech.openGripper();
-                           capMech.levelArm();
-                       })
-                       .lineToSplineHeading(new Pose2d(tsePos.getX(),-55*side,tsePos.getHeading())) // Pre move
-                       .lineToSplineHeading(tsePos)
-                       .waitSeconds(1)
-                       .addTemporalMarker(() -> capMech.closeGripper())
-                       .waitSeconds(0.5)
-                       .addTemporalMarker(() -> capMech.retract())
-                       .build();
 
                // Deposit trajectory
                depositPreLoad = drive.trajectoryBuilder(pickUpTSE.end())
@@ -167,12 +183,18 @@ public class WarehouseTSEAuto extends LinearOpMode {
     
         if (opModeIsActive()) {
             // Autonomous instructions
+            capMech.openGripper();
+            capMech.levelArm();
             drive.followTrajectorySequence(pickUpTSE);
+            sleep(1000);
+            capMech.closeGripper();
+            sleep(500);
+            capMech.retract();
             armSystem.runToLevel(hubActiveLevel); // Extend 4b before driving
             drive.followTrajectory(depositPreLoad); // Drive to spot where we'll deposit from
             depositTimer.reset();
             deposit.dump(depositTimer); // Dump
-            sleep(1000); // Wait for that dump to finish
+            sleep(700); // Wait for that dump to finish
             deposit.dump(depositTimer);
             drive.followTrajectorySequence(park); // Park in warehouse
             intake.dropIntake();
