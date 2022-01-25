@@ -11,12 +11,10 @@ public class MeepMeepTestingTwo {
 
     static double originToWall = 141.0/2.0; // I guess the field is actually 141 inches wide
     static double wallDistance = originToWall - 6.5; // Center of bot is 7in from wall
-    static double carouselXCoordinate = -50;
-    static double carouselYCoordinate = -60;
 
-    static Pose2d startPos = new Pose2d(-35,-(originToWall-9), Math.toRadians(-90));
+    static Pose2d startPos = new Pose2d(40,-(wallDistance), Math.toRadians(0));
 
-    static Pose2d preloadDepositPos = new Pose2d(-16,-45,Math.toRadians(250));
+    static Pose2d preloadDepositPos = new Pose2d(0,-38,Math.toRadians(-45));
 
     public static void main(String[] args) {
         // Declare a MeepMeep instance
@@ -26,16 +24,14 @@ public class MeepMeepTestingTwo {
         RoadRunnerBotEntity bot = new DefaultBotBuilder(meepMeep) // Create a bot
                 .setDimensions(11.6,18) // Width of 11.6 to match our thin bot
                 .setConstraints(55, 30, Math.toRadians(167), Math.toRadians(167), 11)
-
                 // The path we are simulating
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(startPos)
-                                .lineToSplineHeading(preloadDepositPos)
+                                .lineToSplineHeading(new Pose2d(20,startPos.getY(),0))
+                                .splineToSplineHeading(preloadDepositPos,Math.toRadians(120))
                                 .waitSeconds(1)
-                                .lineToSplineHeading(new Pose2d(carouselXCoordinate,carouselYCoordinate,Math.toRadians(0))) // Go to carousel
-                                .waitSeconds(3) // Spin carousel
-                                .lineTo(new Vector2d(carouselXCoordinate+7,carouselYCoordinate)) // Back off carousel
-                                .lineToSplineHeading(new Pose2d(-60,-35,Math.toRadians(0)))
+                                .splineToSplineHeading(new Pose2d(20,startPos.getY(),0),0)
+                                .lineToSplineHeading(startPos)
                                 .build()
                 );
 

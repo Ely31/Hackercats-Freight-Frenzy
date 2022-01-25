@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -9,6 +10,7 @@ public class Intake {
 
     private DcMotor intake;
     private Servo intakeRelease;
+    private ColorSensor intakeSensor;
 
     double RELEASE_HOLD_POSITION = 0.1;
     double RELEASE_DROP_POSITION = 0.25;
@@ -19,6 +21,7 @@ public class Intake {
     public void init(HardwareMap hwmap) {
         intake = hwmap.get(DcMotor.class, "intake");
         intakeRelease = hwmap.get(Servo.class,"intakeRelease");
+        intakeSensor = hwmap.get(ColorSensor.class,"intakeSensor");
         resetDropper();
         lastInput = false;
         intakeToggledStatus = false;
@@ -47,8 +50,16 @@ public class Intake {
     public void dropIntake(){
         intakeRelease.setPosition(RELEASE_DROP_POSITION);
     }
-
     public void resetDropper(){
         intakeRelease.setPosition(RELEASE_HOLD_POSITION);
+    }
+
+    public double sensorProximity(){
+        return intakeSensor.alpha();
+    }
+
+    public boolean freightStatus(){
+        if (sensorProximity() > 120) return true;
+        else return false;
     }
 }

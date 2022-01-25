@@ -66,4 +66,16 @@ public class TeleopDrive {
         AutoToTele.endOfAutoHeading = (Math.PI/2)*AutoToTele.allianceSide; // Unit circle coming in handy
         imu.initialize(imuParameters);
     }
+
+    public void setWheelPowers(double LF, double LB, double RF, double RB){
+        lf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        lf.setPower(LF);
+        lb.setPower(LB);
+        rf.setPower(RF);
+        rb.setPower(RB);
+    }
 }

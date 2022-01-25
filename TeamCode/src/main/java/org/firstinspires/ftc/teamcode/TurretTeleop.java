@@ -63,12 +63,13 @@ public class TurretTeleop extends LinearOpMode {
         while (opModeIsActive()) { // TeleOp loop
             // Mecdrive control
             drive.drive(gamepad1.left_stick_x,gamepad1.left_stick_y,gamepad1.right_stick_x,gamepad1.right_trigger);
-            if (gamepad1.back) drive.resetHeading(); // Reset fieldcentric
+            if (gamepad1.back) drive.resetHeading(); // Reset field centric if needed
 
             // Intake control
             if (gamepad1.b) intake.reverse();
             else if (fourBarState == FourBarState.EXTENDED) intake.off();
             else intake.toggle(gamepad1.a);
+            if (gamepad2.back) intake.dropIntake(); // In case this doesn't happen in auto for some reason
 
             // Deposit control
             if (gamepad1.left_bumper) dumptime.reset();
@@ -87,7 +88,8 @@ public class TurretTeleop extends LinearOpMode {
             switch (fourBarState) { // Gamepad2 A toggles the extended/retracted state of the 4b
                 case RETRACTED:
                     armSystem.setArmPosition(0,0); // Retract arm
-                    armSystem.turretTargetAngle = 0; // Reset turret angle so that when the arm is first extended the turret doesn't move
+                    // Reset turret angle so that when the arm is first extended the turret doesn't move
+                    armSystem.turretTargetAngle = 0;
 
                     if (fourbarToggleInput.trueInput(gamepad2.a)) { // Use A to switch states
                     fourBarState = FourBarState.EXTENDED;
@@ -106,18 +108,17 @@ public class TurretTeleop extends LinearOpMode {
             }
 
             // Cap mech control
-            if (capMechToggleInput.trueInput(gamepad2.dpad_left)) capMechState = !capMechState;
+            if (capMechToggleInput.trueInput(gamepad2.dpad_left)) capMechState = !capMechState; // Raise and lower with dpad left
             if (capMechState) capMech.levelArm();
-            else if (!capMechState)capMech.retract();
-            if (capMechState && gamepad2.dpad_right) capMech.openGripper();
+            else capMech.retract();
+
+            if (capMechState && gamepad2.dpad_right) capMech.openGripper(); // Only let the gripper open when the capmech is down
             else capMech.closeGripper();
 
             // Carousel mech control
             carouselSpinner.setSpeed(gamepad2.left_trigger- gamepad2.right_trigger);
             // Subracting the right trigger input from the left is an easy way to make the left trigger
             // turn it one way and the right trigger turn it the opposite way
-
-            if (gamepad2.back) intake.dropIntake(); // In case this doesn't happen in auto for some reason
 
             if (debug) { // Send data to telemetry for debug purposes if we want to
                 telemetry.addData("4b state", fourBarState);
@@ -126,6 +127,8 @@ public class TurretTeleop extends LinearOpMode {
                 telemetry.addData("turretpos", armSystem.TurretAngle());
                 telemetry.addData("turret target", armSystem.turretTargetAngle);
                 telemetry.addData("heading", -drive.heading);
+                telemetry.addData("proximity", intake.sensorProximity());
+                telemetry.addData("intaken", intake.freightStatus());
                 telemetry.update();
             }
         }
