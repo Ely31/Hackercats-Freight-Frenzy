@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 @Config
-public class CarouselSpinner {
+public class CarouselMech {
 
     private DcMotor carousel;
 

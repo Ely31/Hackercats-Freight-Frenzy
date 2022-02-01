@@ -166,10 +166,10 @@ public class CyclesAuto extends LinearOpMode {
 
                // Cycle trajectory
                intoWarehouse = drive.trajectorySequenceBuilder(depositPreLoad.end())
-                       .addTemporalMarker(0.7, () -> armSystem.setArmPosition(0,0))
+                       .addTemporalMarker(0.5, () -> armSystem.retract())
                        // Line up with wall
                        .splineToSplineHeading(new Pose2d(12,-63*side,Math.toRadians(0*side)),Math.toRadians(0*side))
-                       .addTemporalMarker(()-> intake.setPower(0.5))
+                       .addTemporalMarker(()-> intake.on())
                        .lineTo(new Vector2d(39,-63*side)) // Go into warehouse
                        .build();
 
@@ -182,7 +182,7 @@ public class CyclesAuto extends LinearOpMode {
 
                // Park trajectory
                park = drive.trajectorySequenceBuilder(depositPreLoad.end())
-                       .addTemporalMarker(0.7, () -> armSystem.setArmPosition(0,0))
+                       .addTemporalMarker(0.7, () -> armSystem.retract())
                        .splineToSplineHeading(new Pose2d(12, -wallDistance*side, Math.toRadians(0*side)),Math.toRadians(0))
                        .addTemporalMarker(0.5, () -> armSystem.setArmPosition(0,0))
                        .lineToSplineHeading(new Pose2d(43, -wallDistance*side, Math.toRadians(0*side))) // Go into warehouse
@@ -228,8 +228,8 @@ public class CyclesAuto extends LinearOpMode {
                     .addTemporalMarker(()->intake.off())
                     .addTemporalMarker(1,()-> intake.on())
                     .lineTo(new Vector2d(10,-63*side)) // Go out of warehouse
-                    .addTemporalMarker(()-> intake.off())
                     .addTemporalMarker(()-> armSystem.runToLevel(3))
+                    .addTemporalMarker(()-> intake.off())
                     // Go to shipping hub
                     .splineToSplineHeading(new Pose2d(-2, -40*side, Math.toRadians(-60*side)),Math.toRadians(120*side))
                     .addTemporalMarker(()->{ // Dump it

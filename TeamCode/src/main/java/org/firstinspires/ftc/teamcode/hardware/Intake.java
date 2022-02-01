@@ -61,11 +61,11 @@ public class Intake {
     }
 
     // Take the average of the values of both sensors
-    public double averageProximity(){
-        return (leftSensor.alpha()+ rightSensor.alpha())/2.0;
+    public double maxProximity(){
+        return Math.max(leftSensor.alpha(), rightSensor.alpha());
     }
 
     public boolean freightStatus(){
-        return averageProximity() > 130;
+        return !(350 < maxProximity() && maxProximity() < 450);
     }
 }

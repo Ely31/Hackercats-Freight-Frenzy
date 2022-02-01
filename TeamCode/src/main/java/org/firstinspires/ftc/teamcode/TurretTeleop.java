@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.hardware.ArmSystem;
 import org.firstinspires.ftc.teamcode.hardware.CapMech;
-import org.firstinspires.ftc.teamcode.hardware.CarouselSpinner;
+import org.firstinspires.ftc.teamcode.hardware.CarouselMech;
 import org.firstinspires.ftc.teamcode.hardware.Deposit;
 import org.firstinspires.ftc.teamcode.hardware.Intake;
 import org.firstinspires.ftc.teamcode.hardware.TeleopDrive;
@@ -22,7 +22,7 @@ public class TurretTeleop extends LinearOpMode {
     Intake intake = new Intake();
     Deposit deposit = new Deposit();
     ArmSystem armSystem = new ArmSystem();
-    CarouselSpinner carouselSpinner = new CarouselSpinner();
+    CarouselMech carouselSpinner = new CarouselMech();
     CapMech capMech = new CapMech();
 
     TruePress fourbarToggleInput = new TruePress();
@@ -115,8 +115,8 @@ public class TurretTeleop extends LinearOpMode {
             else capMech.closeGripper();
 
             // Carousel mech control
-            if (gamepad2.left_bumper) carouselSpinner.setSpeed(-1);
             if (gamepad2.right_bumper) carouselSpinner.setSpeed(1);
+            else if (gamepad2.left_bumper) carouselSpinner.setSpeed(-1);
             else carouselSpinner.setSpeed(0);
 
             if (debug) { // Send data to telemetry for debug purposes if we want to
@@ -126,7 +126,7 @@ public class TurretTeleop extends LinearOpMode {
                 telemetry.addData("turretpos", armSystem.TurretAngle());
                 telemetry.addData("turret target", armSystem.turretTargetAngle);
                 telemetry.addData("heading", -drive.heading);
-                telemetry.addData("proximity", intake.averageProximity());
+                telemetry.addData("proximity", intake.maxProximity());
                 telemetry.addData("intaken", intake.freightStatus());
                 telemetry.update();
             }

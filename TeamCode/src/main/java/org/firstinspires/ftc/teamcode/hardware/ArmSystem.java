@@ -27,7 +27,7 @@ public class ArmSystem {
     private final double TURRET_SAFERANGE_MAX = 90;
     private final double TURRET_SAFE_TO_RETRACT_FOURBAR_RANGE = 2;
 
-    private final double FOURBAR_MAX_SPEED = 0.5; // The speed the 4b will always run at while doing any movement
+    private final double FOURBAR_MAX_SPEED = 0.6; // The speed the 4b will always run at while doing any movement
     private final double TURRET_MAX_SPEED = 0.5; // Max speed of the turret
 
     // Positions of the 4b, in degrees from zero, of the 3 levels we want it to run to
