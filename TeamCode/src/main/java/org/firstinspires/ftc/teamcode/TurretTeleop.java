@@ -48,7 +48,7 @@ public class TurretTeleop extends LinearOpMode {
         intake.init(hardwareMap);
         deposit.init(hardwareMap);
         armSystem.init(hardwareMap);
-        armSystem.setArmPosition(0,0);
+        armSystem.retract();
         carouselSpinner.init(hardwareMap);
         capMech.init(hardwareMap);
 
@@ -81,13 +81,13 @@ public class TurretTeleop extends LinearOpMode {
             else if (gamepad2.b) armSystem.activeLevel = 3;
 
             // Tune the height of the active 4b level to account for shipping hub inbalance
-            if (gamepad2.dpad_up) armSystem.editFourbarLevelOffset(0.3); // This number is small because it's added every loop
-            if (gamepad2.dpad_down) armSystem.editFourbarLevelOffset(-0.3);
+            if (gamepad2.dpad_up) armSystem.editFourbarLevelOffset(0.35); // This number is small because it's added every loop
+            if (gamepad2.dpad_down) armSystem.editFourbarLevelOffset(-0.35);
 
             // Four bar control
             switch (fourBarState) { // Gamepad2 A toggles the extended/retracted state of the 4b
                 case RETRACTED:
-                    armSystem.setArmPosition(0,0); // Retract arm
+                    armSystem.retract(); // Retract arm
                     // Reset turret angle so that when the arm is first extended the turret doesn't move
                     armSystem.turretTargetAngle = 0;
 
@@ -98,8 +98,7 @@ public class TurretTeleop extends LinearOpMode {
                 case EXTENDED:
                     // Run the 4b and turret to their desired positions
                     armSystem.setArmPosition(armSystem.levelToAngle(armSystem.activeLevel), armSystem.turretTargetAngle);
-                    if (gamepad2.left_bumper) armSystem.turretTargetAngle += 2; // Change turret angle with bumpers
-                    if (gamepad2.right_bumper) armSystem.turretTargetAngle -= 2;// Change turret angle with bumpers
+                    armSystem.turretTargetAngle += (gamepad2.left_trigger- gamepad2.right_trigger)*2;
 
                     if (fourbarToggleInput.trueInput(gamepad2.a)) { // Use A to switch states
                         fourBarState = FourBarState.RETRACTED;
@@ -116,9 +115,9 @@ public class TurretTeleop extends LinearOpMode {
             else capMech.closeGripper();
 
             // Carousel mech control
-            carouselSpinner.setSpeed(gamepad2.left_trigger- gamepad2.right_trigger);
-            // Subracting the right trigger input from the left is an easy way to make the left trigger
-            // turn it one way and the right trigger turn it the opposite way
+            if (gamepad2.left_bumper) carouselSpinner.setSpeed(-1);
+            if (gamepad2.right_bumper) carouselSpinner.setSpeed(1);
+            else carouselSpinner.setSpeed(0);
 
             if (debug) { // Send data to telemetry for debug purposes if we want to
                 telemetry.addData("4b state", fourBarState);
@@ -127,7 +126,7 @@ public class TurretTeleop extends LinearOpMode {
                 telemetry.addData("turretpos", armSystem.TurretAngle());
                 telemetry.addData("turret target", armSystem.turretTargetAngle);
                 telemetry.addData("heading", -drive.heading);
-                telemetry.addData("proximity", intake.sensorProximity());
+                telemetry.addData("proximity", intake.averageProximity());
                 telemetry.addData("intaken", intake.freightStatus());
                 telemetry.update();
             }

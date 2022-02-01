@@ -10,7 +10,8 @@ public class Intake {
 
     private DcMotor intake;
     private Servo intakeRelease;
-    private ColorSensor intakeSensor;
+    private ColorSensor leftSensor;
+    private ColorSensor rightSensor;
 
     double RELEASE_HOLD_POSITION = 0.1;
     double RELEASE_DROP_POSITION = 0.25;
@@ -21,7 +22,8 @@ public class Intake {
     public void init(HardwareMap hwmap) {
         intake = hwmap.get(DcMotor.class, "intake");
         intakeRelease = hwmap.get(Servo.class,"intakeRelease");
-        intakeSensor = hwmap.get(ColorSensor.class,"intakeSensor");
+        leftSensor = hwmap.get(ColorSensor.class,"leftSensor");
+        rightSensor = hwmap.get(ColorSensor.class,"rightSensor");
         resetDropper();
         lastInput = false;
         intakeToggledStatus = false;
@@ -35,6 +37,10 @@ public class Intake {
     }
     public void reverse(){
         intake.setPower(-1);
+    }
+
+    public void setPower(double power){
+        intake.setPower(power);
     }
 
     public void toggle(boolean input){
@@ -54,12 +60,12 @@ public class Intake {
         intakeRelease.setPosition(RELEASE_HOLD_POSITION);
     }
 
-    public double sensorProximity(){
-        return intakeSensor.alpha();
+    // Take the average of the values of both sensors
+    public double averageProximity(){
+        return (leftSensor.alpha()+ rightSensor.alpha())/2.0;
     }
 
     public boolean freightStatus(){
-        if (sensorProximity() > 120) return true;
-        else return false;
+        return averageProximity() > 130;
     }
 }

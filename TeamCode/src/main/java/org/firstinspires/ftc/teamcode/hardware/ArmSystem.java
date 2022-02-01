@@ -138,6 +138,10 @@ public class ArmSystem {
         turretRunToAngle(turretAngle);
     }
 
+    public void retract(){
+        setArmPosition(0,0);
+    }
+
     public void zeroFourbar(){ // Reset the zero point (the angle where it's fully retracted)
         fourBar.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
