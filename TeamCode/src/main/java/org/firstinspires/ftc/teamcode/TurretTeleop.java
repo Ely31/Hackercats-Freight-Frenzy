@@ -88,8 +88,9 @@ public class TurretTeleop extends LinearOpMode {
             switch (fourBarState) { // Gamepad2 A toggles the extended/retracted state of the 4b
                 case RETRACTED:
                     armSystem.retract(); // Retract arm
-                    // Reset turret angle so that when the arm is first extended the turret doesn't move
-                    armSystem.turretTargetAngle = 0;
+                    // By default bring the turret to it's last position when extending,
+                    // press the left stick to reset it to zero so it doesn't move when you extend
+                    if (gamepad2.left_stick_button) armSystem.turretTargetAngle = 0;
 
                     if (fourbarToggleInput.trueInput(gamepad2.a)) { // Use A to switch states
                     fourBarState = FourBarState.EXTENDED;

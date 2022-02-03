@@ -32,6 +32,7 @@ public class WarehouseTSEAuto extends LinearOpMode {
     int hubActiveLevel = 0;
 
     int side; // Red alliance is 1, blue is -1
+    boolean deepPark = true;
 
     final double originToWall = 141.0/2.0; // I guess the field is actually 141 inches wide
     final double wallDistance = originToWall - 6.5; // Center of bot is 6.5in from wall
@@ -76,6 +77,10 @@ public class WarehouseTSEAuto extends LinearOpMode {
             // Select alliance with gamepad and display it to telemetry
             if (gamepad1.b) AutoToTele.allianceSide = 1;
             if (gamepad1.x) AutoToTele.allianceSide = -1;
+            // Select park depth
+            if (gamepad1.dpad_up) deepPark = true;
+            if (gamepad1.dpad_down) deepPark = false;
+
             side = AutoToTele.allianceSide;
             switch (side) {
                 case 1:
@@ -85,7 +90,9 @@ public class WarehouseTSEAuto extends LinearOpMode {
                     telemetry.addLine("blue alliance");
                     break;
             }
+
             telemetry.addData("going to level", hubActiveLevel);
+            telemetry.addData("deepPark", deepPark);
             telemetry.update();
 
            if (pipelineThrottle.milliseconds() > 1000) {// Throttle loop times to 1 second
@@ -161,14 +168,22 @@ public class WarehouseTSEAuto extends LinearOpMode {
                        .build();
 
                // Park trajectory
-               park = drive.trajectorySequenceBuilder(depositPreLoad.end())
+               if (deepPark) park = drive.trajectorySequenceBuilder(depositPreLoad.end())
                        .addTemporalMarker(0.7, () -> armSystem.setArmPosition(0,0))
                        .lineToSplineHeading(new Pose2d(0, -wallDistance*side, Math.toRadians(0*side)))
                        .addTemporalMarker(0.5, () -> armSystem.setArmPosition(0,0))
                        .lineToSplineHeading(new Pose2d(36, -wallDistance*side, Math.toRadians(0*side))) // Go into warehouse
                        .lineTo(new Vector2d(36,(-(originToWall-34))*side))
-                       .forward(18)
+                       .lineToSplineHeading(new Pose2d(63,-(originToWall-32.5)*side,Math.toRadians(-90*side)))
                        .build();
+               else {
+                   park = drive.trajectorySequenceBuilder(depositPreLoad.end())
+                           .addTemporalMarker(0.7, () -> armSystem.setArmPosition(0,0))
+                           .lineToSplineHeading(new Pose2d(0, -wallDistance*side, Math.toRadians(0*side)))
+                           .addTemporalMarker(0.5, () -> armSystem.setArmPosition(0,0))
+                           .lineToSplineHeading(new Pose2d(38, -wallDistance*side, Math.toRadians(0*side))) // Go into warehouse
+                           .build();
+               }
 
                // Telemetry
                telemetry.addData("going to level", hubActiveLevel);

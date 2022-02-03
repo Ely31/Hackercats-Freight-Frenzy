@@ -81,6 +81,7 @@ public class CarouselTSEAuto extends LinearOpMode {
             // Select alliance with gamepad and display it to telemetry
             if (gamepad1.b) AutoToTele.allianceSide = 1;
             if (gamepad1.x) AutoToTele.allianceSide = -1;
+
             side = AutoToTele.allianceSide;
             switch (side) {
                 case 1:
