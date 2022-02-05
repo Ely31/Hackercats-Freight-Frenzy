@@ -201,7 +201,7 @@ public class CyclesAuto extends LinearOpMode {
         if (opModeIsActive()) {
             // Autonomous instructions
 
-            boolean extraCycle = true;
+            boolean extraCycle = false;
 
             capMech.openGripper();
             capMech.levelArm();
@@ -241,8 +241,14 @@ public class CyclesAuto extends LinearOpMode {
                     .build();
 
             drive.followTrajectorySequence(outAndDeposit);
+            // Deposit again so if we accidentally grab 2 freight we offset the penalty
+            sleep(500);
+            depositTimer.reset();
+            deposit.dump(depositTimer);
+            sleep(350);
+            deposit.dump(depositTimer);
 
-            if (extraCycle){
+            if (extraCycle){ // Extra cycle abandoned for now
                 drive.followTrajectorySequence(intoWarehouse);
                 drive.followTrajectoryAsync(approachFreight);
                 while (!intake.freightStatus()){

@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.vision.SkystoneStyleThreshold;
 
 @Config
 @Autonomous
-public class CarouselTSEAuto extends LinearOpMode {
+public class CarouselAuto extends LinearOpMode {
     // Pre-init
     Camera webcam  = new Camera();
     SkystoneStyleThreshold pipeline = new SkystoneStyleThreshold();

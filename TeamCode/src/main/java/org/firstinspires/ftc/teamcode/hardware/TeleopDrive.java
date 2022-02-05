@@ -42,7 +42,7 @@ public class TeleopDrive {
         imu.initialize(imuParameters);
     }
 
-    public void drive(double x,double y,double turn,double multiplier){
+    public void driveFieldCentric(double x, double y, double turn, double multiplier){
 
         multiplier = (-0.65*multiplier)+1;
 
@@ -55,6 +55,20 @@ public class TeleopDrive {
         double lbPower = rotY - rotX + turn;
         double rfPower = rotY - rotX - turn;
         double rbPower = rotY + rotX - turn;
+
+        lf.setPower(lfPower*multiplier);
+        lb.setPower(lbPower*multiplier);
+        rf.setPower(rfPower*multiplier);
+        rb.setPower(rbPower*multiplier);
+    }
+
+    public void driveRobotCentric(double x, double y, double turn, double multiplier){
+        multiplier = (-0.65*multiplier)+1;
+
+        double lfPower = y + x + turn;
+        double lbPower = y - x + turn;
+        double rfPower = y - x - turn;
+        double rbPower = y + x - turn;
 
         lf.setPower(lfPower*multiplier);
         lb.setPower(lbPower*multiplier);

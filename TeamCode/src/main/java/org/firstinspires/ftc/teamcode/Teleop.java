@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.util.TruePress;
 
 @Config
 @TeleOp
-public class TurretTeleop extends LinearOpMode {
+public class Teleop extends LinearOpMode {
     // Pre-init
 
     TeleopDrive drive = new TeleopDrive();
@@ -62,7 +62,7 @@ public class TurretTeleop extends LinearOpMode {
         // Pre-run
         while (opModeIsActive()) { // TeleOp loop
             // Mecdrive control
-            drive.drive(gamepad1.left_stick_x,gamepad1.left_stick_y,gamepad1.right_stick_x,gamepad1.right_trigger);
+            drive.driveFieldCentric(gamepad1.left_stick_x,gamepad1.left_stick_y,gamepad1.right_stick_x,gamepad1.right_trigger);
             if (gamepad1.back) drive.resetHeading(); // Reset field centric if needed
 
             // Intake control
