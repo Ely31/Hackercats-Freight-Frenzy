@@ -33,6 +33,7 @@ public class CyclesAuto extends LinearOpMode {
     int hubActiveLevel = 0;
 
     int side; // Red alliance is 1, blue is -1
+    boolean deepPark = true;
 
     final double originToWall = 141.0/2.0; // I guess the field is actually 141 inches wide
     final double wallDistance = originToWall - 6.5; // Center of bot is 6.5in from wall
@@ -80,6 +81,10 @@ public class CyclesAuto extends LinearOpMode {
             // Select alliance with gamepad and display it to telemetry
             if (gamepad1.b) AutoToTele.allianceSide = 1;
             if (gamepad1.x) AutoToTele.allianceSide = -1;
+
+            if (gamepad1.dpad_up) deepPark = true;
+            if (gamepad1.dpad_down) deepPark = false;
+
             side = AutoToTele.allianceSide;
             switch (side) {
                 case 1:
@@ -90,6 +95,7 @@ public class CyclesAuto extends LinearOpMode {
                     break;
             }
             telemetry.addData("going to level", hubActiveLevel);
+            telemetry.addData("deepPark", deepPark);
             telemetry.update();
 
            if (pipelineThrottle.milliseconds() > 1000) {// Throttle loop times to 1 second
@@ -153,7 +159,7 @@ public class CyclesAuto extends LinearOpMode {
                            tsePos = farTsePosition;
                            pickUpTSE = drive.trajectorySequenceBuilder(startPos)
                                    .lineToSplineHeading(new Pose2d(tsePos.getX(),-55*side,tsePos.getHeading())) // Pre move
-                                   .splineToSplineHeading(tsePos,Math.toRadians(90))
+                                   .lineToSplineHeading(tsePos)
                                    .build();
                        }
                        break;
@@ -181,13 +187,22 @@ public class CyclesAuto extends LinearOpMode {
                        .build();
 
                // Park trajectory
-               park = drive.trajectorySequenceBuilder(depositPreLoad.end())
-                       .addTemporalMarker(0.7, () -> armSystem.retract())
-                       .splineToSplineHeading(new Pose2d(12, -wallDistance*side, Math.toRadians(0*side)),Math.toRadians(0))
+               if (deepPark) park = drive.trajectorySequenceBuilder(depositPreLoad.end())
+                       .addTemporalMarker(0.7, () -> armSystem.setArmPosition(0,0))
+                       .lineToSplineHeading(new Pose2d(0, -((wallDistance+1)*side), Math.toRadians(0*side)))
                        .addTemporalMarker(0.5, () -> armSystem.setArmPosition(0,0))
-                       .lineToSplineHeading(new Pose2d(43, -wallDistance*side, Math.toRadians(0*side))) // Go into warehouse
+                       .lineToSplineHeading(new Pose2d(37, -(wallDistance+1)*side, Math.toRadians(0*side))) // Go into warehouse
+                       .lineTo(new Vector2d(36,(-(originToWall-34))*side))
+                       .lineToSplineHeading(new Pose2d(63,-(originToWall-32.5)*side,Math.toRadians(-90*side)))
                        .build();
-
+               else {
+                   park = drive.trajectorySequenceBuilder(depositPreLoad.end())
+                           .addTemporalMarker(0.7, () -> armSystem.retract())
+                           .splineToSplineHeading(new Pose2d(12, -wallDistance * side, Math.toRadians(0 * side)), Math.toRadians(0))
+                           .addTemporalMarker(0.5, () -> armSystem.setArmPosition(0, 0))
+                           .lineToSplineHeading(new Pose2d(43, -wallDistance * side, Math.toRadians(0 * side))) // Go into warehouse
+                           .build();
+               }
                // Telemetry
                telemetry.addData("going to level", hubActiveLevel);
                telemetry.update();
@@ -201,13 +216,11 @@ public class CyclesAuto extends LinearOpMode {
         if (opModeIsActive()) {
             // Autonomous instructions
 
-            boolean extraCycle = false;
-
             capMech.openGripper();
             capMech.levelArm();
             drive.followTrajectorySequence(pickUpTSE);
             capMech.closeGripper();
-            sleep(100);
+            sleep(400);
             capMech.retract();
             armSystem.runToLevel(hubActiveLevel); // Extend 4b before driving
             drive.followTrajectory(depositPreLoad); // Drive to spot where we'll deposit from
@@ -231,7 +244,7 @@ public class CyclesAuto extends LinearOpMode {
                     .addTemporalMarker(()-> armSystem.runToLevel(3))
                     .addTemporalMarker(()-> intake.off())
                     // Go to shipping hub
-                    .splineToSplineHeading(new Pose2d(-2, -40*side, Math.toRadians(-60*side)),Math.toRadians(120*side))
+                    .splineToSplineHeading(new Pose2d(0, -44*side, Math.toRadians(-60*side)),Math.toRadians(120*side))
                     .addTemporalMarker(()->{ // Dump it
                         depositTimer.reset();
                         deposit.dump(depositTimer);
@@ -242,36 +255,12 @@ public class CyclesAuto extends LinearOpMode {
 
             drive.followTrajectorySequence(outAndDeposit);
             // Deposit again so if we accidentally grab 2 freight we offset the penalty
-            sleep(500);
+            sleep(1000);
             depositTimer.reset();
             deposit.dump(depositTimer);
             sleep(350);
             deposit.dump(depositTimer);
 
-            if (extraCycle){ // Extra cycle abandoned for now
-                drive.followTrajectorySequence(intoWarehouse);
-                drive.followTrajectoryAsync(approachFreight);
-                while (!intake.freightStatus()){
-                    drive.update();
-                }
-                outAndDeposit = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .waitSeconds(0.5)
-                        .addTemporalMarker(()->intake.off())
-                        .addTemporalMarker(1,()-> intake.on())
-                        .lineTo(new Vector2d(10,-63*side)) // Go out of warehouse
-                        .addTemporalMarker(()-> intake.off())
-                        .addTemporalMarker(()-> armSystem.runToLevel(3))
-                        // Go to shipping hub
-                        .splineToSplineHeading(new Pose2d(0, -45*side, Math.toRadians(-60*side)),Math.toRadians(120*side))
-                        .addTemporalMarker(()->{ // Dump it
-                            depositTimer.reset();
-                            deposit.dump(depositTimer);
-                        })
-                        .waitSeconds(0.35)
-                        .addTemporalMarker(()->deposit.dump(depositTimer))
-                        .build();
-                drive.followTrajectorySequence(outAndDeposit);
-            }
             drive.followTrajectorySequence(park); // Park in warehouse
 
             // Save this information to a class so we can use it in tele to calibate feild centric

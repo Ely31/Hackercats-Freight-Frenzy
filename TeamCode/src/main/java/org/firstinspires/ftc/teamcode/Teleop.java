@@ -72,7 +72,7 @@ public class Teleop extends LinearOpMode {
             if (gamepad2.back) intake.dropIntake(); // In case this doesn't happen in auto for some reason
 
             // Deposit control
-            if (gamepad1.left_bumper) dumptime.reset();
+            if (gamepad1.left_bumper && !capMechState) dumptime.reset();
             deposit.dump(dumptime);
 
             // Change active level of 4b
@@ -100,6 +100,8 @@ public class Teleop extends LinearOpMode {
                     // Run the 4b and turret to their desired positions
                     armSystem.setArmPosition(armSystem.levelToAngle(armSystem.activeLevel), armSystem.turretTargetAngle);
                     armSystem.turretTargetAngle += (gamepad2.left_trigger- gamepad2.right_trigger)*2;
+
+                    if (gamepad2.left_stick_button) armSystem.turretTargetAngle = 0;
 
                     if (fourbarToggleInput.trueInput(gamepad2.a)) { // Use A to switch states
                         fourBarState = FourBarState.RETRACTED;
