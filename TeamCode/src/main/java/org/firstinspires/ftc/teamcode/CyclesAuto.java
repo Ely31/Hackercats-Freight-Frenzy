@@ -167,7 +167,9 @@ public class CyclesAuto extends LinearOpMode {
 
                // Deposit trajectory
                depositPreLoad = drive.trajectoryBuilder(pickUpTSE.end())
-                       .lineToSplineHeading(depositPos)
+                       .lineToSplineHeading(depositPos,
+                               SampleMecanumDrive.getVelocityConstraint(35, DriveConstants.MAX_ANG_VEL,DriveConstants.TRACK_WIDTH),
+                               SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                        .build();
 
                // Cycle trajectory
@@ -239,12 +241,14 @@ public class CyclesAuto extends LinearOpMode {
             outAndDeposit = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                     .waitSeconds(0.5)
                     .addTemporalMarker(()->intake.off())
-                    .addTemporalMarker(1,()-> intake.on())
+                    .addTemporalMarker(0.8,()-> intake.on())
                     .lineTo(new Vector2d(10,-63*side)) // Go out of warehouse
                     .addTemporalMarker(()-> armSystem.runToLevel(3))
                     .addTemporalMarker(()-> intake.off())
                     // Go to shipping hub
-                    .splineToSplineHeading(new Pose2d(0, -44*side, Math.toRadians(-60*side)),Math.toRadians(120*side))
+                    .splineToSplineHeading(new Pose2d(0, -42*side, Math.toRadians(-60*side)),Math.toRadians(120*side),
+                            SampleMecanumDrive.getVelocityConstraint(35, DriveConstants.MAX_ANG_VEL,DriveConstants.TRACK_WIDTH),
+                            SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                     .addTemporalMarker(()->{ // Dump it
                         depositTimer.reset();
                         deposit.dump(depositTimer);

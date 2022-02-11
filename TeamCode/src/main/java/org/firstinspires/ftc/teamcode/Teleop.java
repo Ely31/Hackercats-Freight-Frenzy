@@ -81,8 +81,8 @@ public class Teleop extends LinearOpMode {
             else if (gamepad2.b) armSystem.activeLevel = 3;
 
             // Tune the height of the active 4b level to account for shipping hub inbalance
-            if (gamepad2.dpad_up) armSystem.editFourbarLevelOffset(0.35); // This number is small because it's added every loop
-            if (gamepad2.dpad_down) armSystem.editFourbarLevelOffset(-0.35);
+            if (gamepad2.dpad_up) armSystem.editFourbarLevelOffset(0.4); // This number is small because it's added every loop
+            if (gamepad2.dpad_down) armSystem.editFourbarLevelOffset(-0.4);
 
             // Four bar control
             switch (fourBarState) { // Gamepad2 A toggles the extended/retracted state of the 4b
