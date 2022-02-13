@@ -117,16 +117,16 @@ public class CarouselAuto extends LinearOpMode {
 
                switch (hubActiveLevel) {
                    case 1:
-                       depositPos = new Pose2d(-24, -40.5*side, Math.toRadians(245*side));
+                       depositPos = new Pose2d(-23, -40.5*side, Math.toRadians(245*side));
                        if (side == 1) tsePos = farTsePosition; // Switch close and far positions on blue alliance
                        else tsePos = closeTsePosition;
                        break;
                    case 2:
-                       depositPos = new Pose2d(-24, -43*side, Math.toRadians(245*side));
+                       depositPos = new Pose2d(-23, -43*side, Math.toRadians(245*side));
                        tsePos = middleTsePosition;
                        break;
                    case 3:
-                       depositPos = new Pose2d(-24, -41*side, Math.toRadians(245*side));
+                       depositPos = new Pose2d(-23, -41*side, Math.toRadians(245*side));
                        if (side == 1) tsePos = closeTsePosition;  // Switch close and far positions on blue alliance
                        else tsePos = farTsePosition;
                        break;
